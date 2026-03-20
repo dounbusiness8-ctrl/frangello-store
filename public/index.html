@@ -10,6 +10,18 @@
 </head>
 <body>
 
+<div class="announcement-bar">
+  <div class="announcement-inner">
+    <div class="announcement-track">
+      <span class="announcement-pill">Оплата при получении</span>
+      <span class="announcement-text">Доставка по всей Беларуси за 2–5 дней</span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-text">Быстрое подтверждение заказа</span>
+    </div>
+    <a href="#products" class="announcement-link">Смотреть хиты</a>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="header" id="header">
   <div class="header-inner">
@@ -37,21 +49,45 @@
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-badge">🔥 Новинки каждую неделю</div>
-    <h1 class="hero-title" id="heroTitle">Откройте Премиум Товары</h1>
-    <p class="hero-sub" id="heroSubtitle">Гаджеты и товары для кухни с доставкой до вашей двери</p>
-    <div class="hero-features">
-      <div class="hero-feat"><span>📦</span> Быстрая доставка</div>
-      <div class="hero-feat"><span>💵</span> Оплата при получении</div>
-      <div class="hero-feat"><span>⭐</span> Проверенное качество</div>
+    <div class="hero-copy">
+      <div class="hero-badge">🔥 Новинки и хиты для дома</div>
+      <h1 class="hero-title" id="heroTitle">Товары, которые <span class="hero-title-accent">хочется заказать</span> сразу</h1>
+      <p class="hero-sub" id="heroSubtitle">Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении</p>
+      <div class="hero-features">
+        <div class="hero-feat"><span>📦</span> Доставка 2–5 дней</div>
+        <div class="hero-feat"><span>💳</span> Оплата при получении</div>
+        <div class="hero-feat"><span>⭐</span> 100% оригинал</div>
+      </div>
+      <div class="hero-actions">
+        <a href="#products" class="btn-hero">Смотреть товары <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></a>
+        <a href="#testimonials" class="btn-ghost">Отзывы покупателей</a>
+      </div>
     </div>
-    <a href="#products" class="btn-hero">Купить сейчас <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></a>
   </div>
   <div class="hero-visual">
-    <div class="hero-card-float c1">⚡</div>
-    <div class="hero-card-float c2">🍳</div>
-    <div class="hero-card-float c3">🎧</div>
-    <div class="hero-circle"></div>
+    <div class="hero-glow-ring"></div>
+    <div class="hero-glow-ring-2"></div>
+    <div class="hero-product-cards">
+      <div class="hero-pcard pc1">
+        <span class="hero-pcard-icon">⚡</span>
+        <div class="hero-pcard-name">Гаджеты для дома</div>
+        <div class="hero-pcard-price">от 18 BYN</div>
+        <span class="hero-pcard-badge">В наличии</span>
+        <div class="hero-dot-badge">HOT<br>SALE</div>
+      </div>
+      <div class="hero-pcard pc2">
+        <span class="hero-pcard-icon">🍳</span>
+        <div class="hero-pcard-name">Товары для кухни</div>
+        <div class="hero-pcard-price">от 12 BYN</div>
+        <span class="hero-pcard-badge">Хит продаж</span>
+      </div>
+      <div class="hero-pcard pc3">
+        <span class="hero-pcard-icon">🎧</span>
+        <div class="hero-pcard-name">Электроника</div>
+        <div class="hero-pcard-price">от 32 BYN</div>
+        <span class="hero-pcard-badge">Новинка</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -63,18 +99,119 @@
   <div class="stat-item"><strong>🚚</strong><span>Вся Беларусь</span></div>
 </div>
 
+<!-- TICKER -->
+<div class="ticker-strip">
+  <div class="ticker-track">
+    <span>Frangello By</span><span class="sep">•</span>
+    <span>Оплата при получении</span><span class="sep">•</span>
+    <span>Доставка по всей Беларуси</span><span class="sep">•</span>
+    <span>Гаджеты &amp; Кухня</span><span class="sep">•</span>
+    <span>100% Оригинал</span><span class="sep">•</span>
+    <span>Быстрое подтверждение</span><span class="sep">•</span>
+    <span>Frangello By</span><span class="sep">•</span>
+    <span>Оплата при получении</span><span class="sep">•</span>
+    <span>Доставка по всей Беларуси</span><span class="sep">•</span>
+    <span>Гаджеты &amp; Кухня</span><span class="sep">•</span>
+    <span>100% Оригинал</span><span class="sep">•</span>
+    <span>Быстрое подтверждение</span><span class="sep">•</span>
+  </div>
+</div>
+
+<section class="reward-banner hidden" id="rewardBanner">
+  <div class="container">
+    <div class="reward-banner-card">
+      <div class="reward-banner-copy">
+        <span class="reward-banner-kicker">Ваш бонус активирован</span>
+        <h2>Скидка 50% на любой следующий товар</h2>
+        <p>Вы получили подарок после заказа. Выберите любой товар на этой странице и назовите код при подтверждении заказа.</p>
+      </div>
+      <div class="reward-banner-side">
+        <div class="reward-banner-code">
+          <span>Код бонуса</span>
+          <strong id="rewardBannerCode">FRANGELLO50</strong>
+        </div>
+        <a href="#products" class="btn-hero reward-banner-btn">Использовать бонус</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="marketplace-section">
+  <div class="container">
+    <div class="marketplace-grid">
+      <article class="marketplace-card featured">
+        <span class="marketplace-kicker">Почему выбирают нас</span>
+        <h2>Удобная покупка без лишней сложности</h2>
+        <p>Понятная подача, спокойный выбор и безопасные условия заказа по всей Беларуси.</p>
+        <div class="marketplace-points">
+          <div>Цена и выгода видны сразу</div>
+          <div>Оплата только при получении</div>
+          <div>Удобно заказать для себя или в подарок</div>
+        </div>
+      </article>
+      <article class="marketplace-card">
+        <span class="marketplace-icon">🛒</span>
+        <h3>Лёгкий выбор</h3>
+        <p>Чистая витрина и понятные карточки товаров.</p>
+      </article>
+      <article class="marketplace-card">
+        <span class="marketplace-icon">🛡️</span>
+        <h3>Меньше риска</h3>
+        <p>Никакой предоплаты, сначала получение товара.</p>
+      </article>
+      <article class="marketplace-card">
+        <span class="marketplace-icon">🎁</span>
+        <h3>Больше причин купить</h3>
+        <p>Практичные товары, которые приятно дарить и использовать.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- COLLECTIONS FILTER -->
 <section class="collections-section" id="products">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Хиты, которые выбирают снова</h2>
-      <p class="section-sub">Практичные товары для дома и кухни, которые действительно упрощают повседневную жизнь</p>
+      <p class="section-sub">Практичные товары для дома и кухни, которые действительно упрощают повседневную жизнь и продаются лучше на понятной, сильной витрине</p>
     </div>
     <div class="collections-tabs" id="collectionsBar"></div>
     <div class="products-grid" id="productsGrid"></div>
     <div class="no-products hidden" id="noProducts">
       <span>😕</span>
       <p>В этой категории пока нет товаров.</p>
+    </div>
+  </div>
+</section>
+
+<section class="journey-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-kicker">Как проходит покупка</span>
+      <h2 class="section-title">Максимально простой путь от интереса до заказа</h2>
+      <p class="section-sub">Такой сценарий снижает сомнения и помогает клиенту быстрее принять решение</p>
+    </div>
+    <div class="journey-grid">
+      <article class="journey-card">
+        <span>01</span>
+        <h3>Замечает выгоду</h3>
+        <p>Клиент сразу видит цену, пользу товара и безопасные условия покупки.</p>
+      </article>
+      <article class="journey-card">
+        <span>02</span>
+        <h3>Быстро выбирает</h3>
+        <p>Понятные карточки и аккуратная подача помогают не теряться в выборе.</p>
+      </article>
+      <article class="journey-card">
+        <span>03</span>
+        <h3>Доверяет магазину</h3>
+        <p>Отзывы, оплата при получении и доставка по Беларуси усиливают уверенность.</p>
+      </article>
+      <article class="journey-card">
+        <span>04</span>
+        <h3>Оформляет заказ</h3>
+        <p>Без сложной анкеты, без предоплаты, с быстрым подтверждением заказа.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -185,6 +322,12 @@
       <p>г. Брест, ул. Заводская 2-я д. 4 корп. 4, кв. 202, эт. 2</p>
       <p>УНП: 291900766</p>
     </div>
+    <div class="footer-legal-links">
+      <a href="/privacy.html">Политика конфиденциальности</a>
+      <a href="/offer.html">Публичная оферта</a>
+      <a href="/terms.html">Условия использования</a>
+      <a href="/returns.html">Доставка и возврат</a>
+    </div>
     <p class="footer-copy">© 2024 Frangello By. Все права защищены.</p>
   </div>
 </footer>
@@ -197,6 +340,7 @@
   <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
+<script src="/js/tracking.js"></script>
 <script src="/js/main.js"></script>
 </body>
 </html>

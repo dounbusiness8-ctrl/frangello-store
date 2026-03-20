@@ -5,6 +5,8 @@ let allProducts = [];
 let allCollections = [];
 let currentEditId = null;
 let currentConfig = {};
+let uploadedImageData = '';
+let currentVariantDraft = [];
 
 // ─── LOGIN ───────────────────────────────────────────────────────────────────
 async function doLogin(e) {
@@ -71,6 +73,8 @@ async function loadStats() {
     document.getElementById('s-new').textContent = s.newOrders;
     document.getElementById('s-today').textContent = s.todayOrders;
     document.getElementById('s-products').textContent = s.totalProducts;
+    document.getElementById('heroOrdersBadge').textContent = s.totalOrders;
+    document.getElementById('heroRevenueBadge').textContent = formatMoney(s.revenue || 0, currentConfig.currency || 'BYN');
     if (s.newOrders > 0) {
       const badge = document.getElementById('newOrderBadge');
       badge.textContent = s.newOrders;
@@ -109,10 +113,10 @@ function renderOrders(orders) {
     const dateStr = d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     return `
     <tr>
-      <td class="order-name">${esc(o.name)}</td>
+      <td class="order-name">${esc(o.name)}${o.orderType === 'consultation' ? ' <span class="visibility-badge" style="background:#e0f2fe;color:#075985;margin-left:6px">Consultation</span>' : ''}</td>
       <td class="order-phone">${esc(o.phone)}</td>
-      <td class="order-product" title="${esc(o.productName || '')}">${esc(o.productName || '—')}</td>
-      <td class="order-price">${(o.price || 0).toLocaleString()} DA</td>
+      <td class="order-product" title="${esc(buildOrderProductLabel(o))}">${esc(buildOrderProductLabel(o) || '—')}</td>
+      <td class="order-price">${(o.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'}</td>
       <td class="order-date">${dateStr}</td>
       <td><span class="status-badge status-${o.status}">${o.status}</span></td>
       <td>
@@ -164,11 +168,11 @@ function renderRecentOrders(orders) {
     <div class="recent-order-row">
       <div class="recent-avatar">${o.name.charAt(0).toUpperCase()}</div>
       <div class="recent-info">
-        <div class="recent-name">${esc(o.name)} · <span style="font-size:12px;color:#aaa">${esc(o.phone)}</span></div>
-        <div class="recent-product">${esc(o.productName || '—')}</div>
+        <div class="recent-name">${esc(o.name)}${o.orderType === 'consultation' ? ' · <span style="font-size:12px;color:#1a9fe0;font-weight:700">consultation</span>' : ''} · <span style="font-size:12px;color:#aaa">${esc(o.phone)}</span></div>
+        <div class="recent-product">${esc(buildOrderProductLabel(o) || '—')}</div>
       </div>
       <div class="recent-right">
-        <div class="recent-price">${(o.price || 0).toLocaleString()} DA</div>
+        <div class="recent-price">${(o.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'}</div>
         <div class="recent-time">${timeAgo}</div>
       </div>
       <span class="status-badge status-${o.status}">${o.status}</span>
@@ -202,8 +206,9 @@ function renderAdminProducts(products) {
           ${p.collection || 'No collection'} ·
           <span class="visibility-badge ${p.visible ? 'visible-yes' : 'visible-no'}">${p.visible ? 'Visible' : 'Hidden'}</span>
           ${p.badge ? `<span class="visibility-badge" style="background:#fef3c7;color:#92400e">${p.badge}</span>` : ''}
+          ${Array.isArray(p.variants) && p.variants.length ? `<span class="visibility-badge" style="background:#ede9fe;color:#6d28d9">${p.variants.length} variant${p.variants.length > 1 ? 's' : ''}</span>` : ''}
         </div>
-        <div class="admin-product-price">${(p.price || 0).toLocaleString()} DA ${p.oldPrice ? `<span style="font-size:12px;color:#bbb;font-weight:400;text-decoration:line-through">${p.oldPrice.toLocaleString()} DA</span>` : ''}</div>
+        <div class="admin-product-price">${(p.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'} ${p.oldPrice ? `<span style="font-size:12px;color:#bbb;font-weight:400;text-decoration:line-through">${p.oldPrice.toLocaleString()} ${currentConfig.currency || 'BYN'}</span>` : ''}</div>
         <div class="admin-product-actions">
           <button class="btn-primary" style="font-size:12px;padding:7px 14px" onclick="openProductModal('${p.id}')">Edit</button>
           <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
@@ -220,6 +225,9 @@ function openProductModal(editId = null) {
   const form = document.getElementById('productForm');
   form.reset();
   document.getElementById('imagePreviewWrap').style.display = 'none';
+  uploadedImageData = '';
+  currentVariantDraft = [];
+  renderVariantBuilder();
 
   // Populate collection dropdown
   const sel = document.getElementById('pCollection');
@@ -238,7 +246,12 @@ function openProductModal(editId = null) {
     document.getElementById('pBadge').value = p.badge || '';
     document.getElementById('pVisible').value = String(p.visible !== false);
     document.getElementById('pImage').value = p.image || '';
-    if (p.image) showImagePreview(p.image);
+    if (p.image) {
+      uploadedImageData = p.image;
+      showImagePreview(p.image);
+    }
+    currentVariantDraft = normalizeVariants(p.variants);
+    renderVariantBuilder();
   } else {
     document.getElementById('productModalTitle').textContent = 'Add Product';
   }
@@ -254,7 +267,28 @@ function closeProductModal() {
 }
 
 document.getElementById('pImage').addEventListener('input', function() {
+  uploadedImageData = this.value.trim();
   showImagePreview(this.value);
+});
+
+document.getElementById('pImageFile').addEventListener('change', async function() {
+  const file = this.files && this.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    showToast('Please choose an image file.', 'error');
+    this.value = '';
+    return;
+  }
+
+  try {
+    uploadedImageData = await readFileAsDataURL(file);
+    document.getElementById('pImage').value = '';
+    showImagePreview(uploadedImageData);
+    showToast('Image uploaded successfully.', 'success');
+  } catch {
+    showToast('Could not read this image file.', 'error');
+  }
 });
 
 function showImagePreview(url) {
@@ -277,7 +311,8 @@ async function saveProduct(e) {
     collection: document.getElementById('pCollection').value,
     badge: document.getElementById('pBadge').value,
     visible: document.getElementById('pVisible').value === 'true',
-    image: document.getElementById('pImage').value.trim()
+    image: uploadedImageData || document.getElementById('pImage').value.trim(),
+    variants: collectVariantsFromBuilder()
   };
 
   try {
@@ -416,7 +451,7 @@ function renderAnalytics() {
 }
 
 function renderOverviewAnalytics() {
-  const currency = currentConfig.currency || 'DA';
+  const currency = currentConfig.currency || 'BYN';
   const totalOrders = allOrders.length;
   const deliveredOrders = allOrders.filter(order => order.status === 'delivered');
   const confirmedOrders = allOrders.filter(order => order.status === 'confirmed');
@@ -478,7 +513,7 @@ function renderTrendChart() {
 
 function renderTopProducts() {
   const list = document.getElementById('topProductsList');
-  const currency = currentConfig.currency || 'DA';
+  const currency = currentConfig.currency || 'BYN';
   const topProducts = getTopProducts(5);
 
   if (!topProducts.length) {
@@ -577,6 +612,90 @@ function startOfDay(date) {
 
 function formatMoney(value, currency) {
   return `${Number(value || 0).toLocaleString()} ${currency}`;
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function addVariantGroup() {
+  currentVariantDraft.push({ name: '', values: '' });
+  renderVariantBuilder();
+}
+
+function removeVariantGroup(index) {
+  currentVariantDraft.splice(index, 1);
+  renderVariantBuilder();
+}
+
+function updateVariantField(index, field, value) {
+  if (!currentVariantDraft[index]) return;
+  currentVariantDraft[index][field] = value;
+}
+
+function renderVariantBuilder() {
+  const wrap = document.getElementById('variantsBuilder');
+  if (!wrap) return;
+
+  if (!currentVariantDraft.length) {
+    wrap.innerHTML = '<p class="field-hint" style="margin-top:0">No variants added yet. Leave this empty for simple products.</p>';
+    return;
+  }
+
+  wrap.innerHTML = currentVariantDraft.map((variant, index) => `
+    <div class="variant-group">
+      <div class="variant-group-head">
+        <span class="variant-group-title">Variant ${index + 1}</span>
+        <button type="button" class="btn-danger" onclick="removeVariantGroup(${index})">Remove</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Option Name</label>
+          <input type="text" value="${escAttr(variant.name || '')}" placeholder="Color, Size, Model"
+            oninput="updateVariantField(${index}, 'name', this.value)" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Choices</label>
+          <input type="text" value="${escAttr(variant.values || '')}" placeholder="Black, White, XL"
+            oninput="updateVariantField(${index}, 'values', this.value)" />
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function collectVariantsFromBuilder() {
+  return currentVariantDraft
+    .map(variant => ({
+      name: String(variant.name || '').trim(),
+      values: String(variant.values || '')
+        .split(',')
+        .map(value => value.trim())
+        .filter(Boolean)
+    }))
+    .filter(variant => variant.name && variant.values.length);
+}
+
+function normalizeVariants(variants) {
+  if (!Array.isArray(variants)) return [];
+  return variants.map(variant => ({
+    name: variant.name || '',
+    values: Array.isArray(variant.values) ? variant.values.join(', ') : ''
+  }));
+}
+
+function escAttr(str) {
+  return esc(str).replace(/'/g, '&#39;');
+}
+
+function buildOrderProductLabel(order) {
+  const base = order.productName || '—';
+  return order.variantLabel ? `${base} (${order.variantLabel})` : base;
 }
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────

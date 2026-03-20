@@ -89,11 +89,11 @@ async function initSampleData() {
   const collections = await readRaw('collections.json');
   if (!collections) {
     await writeJSON('collections.json', [
-      { id: '1', name: 'All', slug: 'all', icon: '✨' },
-      { id: '2', name: 'Kitchen', slug: 'kitchen', icon: '🍳' },
-      { id: '3', name: 'Gadgets', slug: 'gadgets', icon: '⚡' },
-      { id: '4', name: 'Home', slug: 'home', icon: '🏠' },
-      { id: '5', name: 'Lifestyle', slug: 'lifestyle', icon: '💫' }
+      { id: '1', name: 'Все товары', slug: 'all', icon: '✨' },
+      { id: '2', name: 'Кухня', slug: 'kitchen', icon: '🍳' },
+      { id: '3', name: 'Гаджеты', slug: 'gadgets', icon: '⚡' },
+      { id: '4', name: 'Дом', slug: 'home', icon: '🏠' },
+      { id: '5', name: 'Стиль жизни', slug: 'lifestyle', icon: '💫' }
     ]);
   }
 
@@ -103,10 +103,10 @@ async function initSampleData() {
     await writeJSON('products.json', [
       {
         id: uuidv4(),
-        name: 'Multi-Function Air Fryer Pro',
-        description: 'Cook healthier meals with 80% less oil. Digital touch screen, 8 preset modes.',
-        price: 4500,
-        oldPrice: 6500,
+        name: 'Мультифункциональная аэрофритюрница Pro',
+        description: 'Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.',
+        price: 149,
+        oldPrice: 219,
         image: 'https://images.pexels.com/photos/4116714/pexels-photo-4116714.jpeg?auto=compress&w=500',
         collection: 'kitchen',
         badge: 'HOT',
@@ -116,10 +116,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Smart LED Desk Lamp',
-        description: 'USB charging port, 3 color modes, touch dimmer, flexible arm.',
-        price: 1800,
-        oldPrice: 2500,
+        name: 'Умная LED лампа для рабочего стола',
+        description: 'USB зарядка, 3 режима цвета, сенсорное управление, гибкая ножка.',
+        price: 58,
+        oldPrice: 85,
         image: 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&w=500',
         collection: 'gadgets',
         badge: 'NEW',
@@ -129,10 +129,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Electric Knife Sharpener',
-        description: 'Professional 3-stage sharpening, works on all knife types, safe & easy.',
-        price: 2200,
-        oldPrice: 3000,
+        name: 'Электрическая точилка для ножей',
+        description: 'Профессиональная заточка в 3 этапа, работает со всеми типами ножей.',
+        price: 72,
+        oldPrice: 98,
         image: 'https://images.pexels.com/photos/4397899/pexels-photo-4397899.jpeg?auto=compress&w=500',
         collection: 'kitchen',
         badge: 'SALE',
@@ -142,10 +142,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Wireless Earbuds Pro X',
-        description: 'Active noise cancellation, 36hr battery, IPX5 water resistant.',
-        price: 3200,
-        oldPrice: 4800,
+        name: 'Беспроводные наушники Pro X',
+        description: 'Активное шумоподавление, 36 часов работы, защита IPX5 от воды.',
+        price: 105,
+        oldPrice: 159,
         image: 'https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&w=500',
         collection: 'gadgets',
         badge: 'HOT',
@@ -155,10 +155,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Portable Blender Bottle',
-        description: 'USB rechargeable, 6 blades, blend anywhere in 30 seconds.',
-        price: 1500,
-        oldPrice: 2200,
+        name: 'Портативный блендер-бутылка',
+        description: 'USB зарядка, 6 лезвий, смешивает за 30 секунд — бери с собой.',
+        price: 48,
+        oldPrice: 72,
         image: 'https://images.pexels.com/photos/775996/pexels-photo-775996.jpeg?auto=compress&w=500',
         collection: 'kitchen',
         badge: 'NEW',
@@ -168,10 +168,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Smart Watch Fitness Band',
-        description: 'Heart rate, SpO2, sleep tracking, 7-day battery, waterproof.',
-        price: 2800,
-        oldPrice: 4000,
+        name: 'Смарт-часы с фитнес трекером',
+        description: 'Пульс, SpO2, мониторинг сна, 7 дней работы, водонепроницаемые.',
+        price: 92,
+        oldPrice: 135,
         image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&w=500',
         collection: 'gadgets',
         badge: 'HOT',
@@ -181,10 +181,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Silicone Cooking Set (7pcs)',
-        description: 'Heat resistant to 230°C, non-stick, food-grade silicone, dishwasher safe.',
-        price: 1200,
-        oldPrice: 1800,
+        name: 'Силиконовый набор для кухни (7 предметов)',
+        description: 'Термостойкость до 230°C, антипригарное, пищевой силикон, можно в посудомойку.',
+        price: 39,
+        oldPrice: 59,
         image: 'https://images.pexels.com/photos/4397844/pexels-photo-4397844.jpeg?auto=compress&w=500',
         collection: 'kitchen',
         badge: 'SALE',
@@ -194,10 +194,10 @@ async function initSampleData() {
       },
       {
         id: uuidv4(),
-        name: 'Mini Projector HD',
-        description: '1080p support, built-in speaker, HDMI/USB, home cinema experience.',
-        price: 5500,
-        oldPrice: 8000,
+        name: 'Мини-проектор HD',
+        description: 'Поддержка 1080p, встроенный динамик, HDMI/USB, кино у вас дома.',
+        price: 179,
+        oldPrice: 259,
         image: 'https://images.pexels.com/photos/7991168/pexels-photo-7991168.jpeg?auto=compress&w=500',
         collection: 'gadgets',
         badge: 'NEW',
@@ -216,11 +216,11 @@ async function initSampleData() {
     await writeJSON('config.json', {
       adminPassword: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD,
       storeName: 'Frangello By',
-      tagline: 'Premium Gadgets & Kitchen Essentials',
+      tagline: 'Гаджеты и товары для кухни — с доставкой по Беларуси',
       whatsapp: '',
-      currency: 'DA',
-      heroTitle: 'Discover Premium Products',
-      heroSubtitle: 'Gadgets & Kitchen Essentials delivered to your door'
+      currency: 'BYN',
+      heroTitle: 'Товары, которые хочется заказать сразу',
+      heroSubtitle: 'Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении'
     });
   }
 }

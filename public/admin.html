@@ -86,6 +86,24 @@
 
     <!-- DASHBOARD TAB -->
     <div class="tab-content active" id="tab-dashboard">
+      <section class="dashboard-hero">
+        <div class="dashboard-hero-copy">
+          <span class="dashboard-kicker">Frangello Admin</span>
+          <h2>Control your shop with a clearer, more confident dashboard</h2>
+          <p>Track orders, watch sales momentum, and understand what is driving your store performance at a glance.</p>
+        </div>
+        <div class="dashboard-hero-badges">
+          <div class="hero-badge-card">
+            <strong id="heroOrdersBadge">0</strong>
+            <span>Total orders tracked</span>
+          </div>
+          <div class="hero-badge-card">
+            <strong id="heroRevenueBadge">0 BYN</strong>
+            <span>Delivered revenue</span>
+          </div>
+        </div>
+      </section>
+
       <div class="stats-grid">
         <div class="stat-card primary">
           <div class="stat-icon">📦</div>
@@ -116,12 +134,12 @@
           <div class="analytics-kpis">
             <div class="mini-kpi">
               <span class="mini-kpi-label">Delivered Revenue</span>
-              <strong class="mini-kpi-value" id="a-revenue">0 DA</strong>
+              <strong class="mini-kpi-value" id="a-revenue">0 BYN</strong>
               <span class="mini-kpi-note" id="a-revenue-note">No delivered orders yet</span>
             </div>
             <div class="mini-kpi">
               <span class="mini-kpi-label">Average Order Value</span>
-              <strong class="mini-kpi-value" id="a-average">0 DA</strong>
+              <strong class="mini-kpi-value" id="a-average">0 BYN</strong>
               <span class="mini-kpi-note" id="a-average-note">Calculated from all orders</span>
             </div>
             <div class="mini-kpi">
@@ -282,7 +300,7 @@
             </div>
             <div class="form-group">
               <label>Currency</label>
-              <input type="text" id="cfg-currency" placeholder="DA" />
+              <input type="text" id="cfg-currency" placeholder="BYN" />
             </div>
           </div>
           <div class="form-group">
@@ -343,13 +361,23 @@
         <label>Description</label>
         <textarea id="pDesc" rows="3" placeholder="Short product description..."></textarea>
       </div>
+      <div class="form-group">
+        <label>Variants</label>
+        <div class="variants-panel">
+          <div class="variants-panel-top">
+            <p class="field-hint" style="margin-top:0">Add only the options this product needs, like color, size, or model.</p>
+            <button type="button" class="btn-secondary" onclick="addVariantGroup()">+ Add Variant</button>
+          </div>
+          <div id="variantsBuilder"></div>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Price (DA) *</label>
+          <label>Price (BYN) *</label>
           <input type="number" id="pPrice" required placeholder="2500" min="0" />
         </div>
         <div class="form-group">
-          <label>Original Price (DA)</label>
+          <label>Original Price (BYN)</label>
           <input type="number" id="pOldPrice" placeholder="3500" min="0" />
         </div>
       </div>
@@ -372,8 +400,10 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Image URL</label>
-        <input type="url" id="pImage" placeholder="https://..." />
+        <label>Product Image</label>
+        <input type="file" id="pImageFile" accept="image/*" />
+        <input type="url" id="pImage" placeholder="Or paste image URL if needed" />
+        <p class="field-hint">Upload a picture from your device or keep using an image link.</p>
         <div id="imagePreviewWrap" style="margin-top:8px;display:none">
           <img id="imagePreview" src="" alt="Preview" style="max-height:120px;border-radius:8px;object-fit:cover" />
         </div>

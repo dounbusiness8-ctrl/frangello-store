@@ -11,6 +11,18 @@
 </head>
 <body class="product-page">
 
+<div class="announcement-bar">
+  <div class="announcement-inner">
+    <div class="announcement-track">
+      <span class="announcement-pill">Оплата при получении</span>
+      <span class="announcement-text">Консультация и подтверждение заказа в короткие сроки</span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-text">Доставка по Беларуси 2–5 дней</span>
+    </div>
+    <a href="#plpOrderForm" class="announcement-link">Оформить заказ</a>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="header scrolled" id="header">
   <div class="header-inner">
@@ -67,14 +79,32 @@
       <div class="plp-info-col">
 
         <div class="plp-collection-tag" id="plpCollection"></div>
+        <div class="plp-proof-row">
+          <div class="plp-proof-item">
+            <span class="plp-proof-stars">★★★★★</span>
+            <strong>Покупателям нравится</strong>
+          </div>
+          <div class="plp-proof-item muted">Безопасный заказ по всей Беларуси</div>
+        </div>
         <h1 class="plp-product-title" id="plpTitle">Загрузка...</h1>
-        <p class="plp-description" id="plpDesc"></p>
+
+        <div class="plp-urgency-bar">
+          <div class="plp-urgency-icon">⏱</div>
+          <div>
+            <strong>Лучше оставить заявку сегодня</strong>
+            <p>Мы быстро подтверждаем заказы и консультации, пока товар и удобный вариант ещё актуальны для выбора.</p>
+          </div>
+        </div>
 
         <!-- PRICE BLOCK -->
         <div class="plp-price-block">
-          <div class="plp-prices">
-            <span class="plp-price" id="plpPrice"></span>
-            <span class="plp-old-price" id="plpOldPrice" style="display:none"></span>
+          <div class="plp-price-copy">
+            <span class="plp-price-caption">Цена сегодня</span>
+            <div class="plp-prices">
+              <span class="plp-price" id="plpPrice"></span>
+              <span class="plp-old-price" id="plpOldPrice" style="display:none"></span>
+            </div>
+            <div class="plp-price-foot">Оплата только при получении. Без предоплаты.</div>
           </div>
           <div class="plp-save-badge" id="plpSaveBadge" style="display:none">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -91,23 +121,34 @@
           </div>
         </div>
 
+        <div class="plp-variants hidden" id="plpVariants">
+          <h3 class="plp-variants-title">Выберите вариант</h3>
+          <div class="plp-variants-grid" id="plpVariantsGrid"></div>
+        </div>
+
         <!-- ORDER FORM -->
         <div class="plp-order-form" id="plpOrderForm">
-          <h3 class="plp-form-title">Оформить заказ — введите ваши данные</h3>
+          <div class="plp-form-top">
+            <div>
+              <h3 class="plp-form-title">Оформить заказ</h3>
+              <p class="plp-form-subtitle">Оставьте данные, и мы быстро свяжемся для подтверждения.</p>
+            </div>
+            <div class="plp-form-badge">Оплата при получении</div>
+          </div>
           <form onsubmit="submitProductOrder(event)">
             <div class="plp-form-group">
               <label for="plpName">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 Ваше имя *
               </label>
-              <input type="text" id="plpName" placeholder="Введите ваше полное имя" required autocomplete="name" />
+              <input type="text" id="plpName" placeholder="Введите ваше полное имя" required autocomplete="name" minlength="3" />
             </div>
             <div class="plp-form-group">
               <label for="plpPhone">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
                 Номер телефона *
               </label>
-              <input type="tel" id="plpPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" />
+              <input type="tel" id="plpPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" inputmode="tel" />
             </div>
             <button type="submit" class="plp-order-btn" id="plpOrderBtn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03L20.7 6H5.21l-.94-2H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.96C5 17.1 5.9 18 7 18h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg>
@@ -117,6 +158,14 @@
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
               Мы позвоним для подтверждения. Оплата только при доставке.
             </p>
+            <p class="plp-legal-note">
+              Отправляя форму, вы соглашаетесь с <a href="/privacy.html">политикой конфиденциальности</a> и <a href="/offer.html">условиями оферты</a>.
+            </p>
+            <div class="plp-form-trust">
+              <span>Быстрое подтверждение</span>
+              <span>Доставка 2–5 дней</span>
+              <span>Безопасная покупка</span>
+            </div>
           </form>
         </div>
 
@@ -129,6 +178,32 @@
             <div class="plp-step"><span>1</span> Звоним для подтверждения</div>
             <div class="plp-step"><span>2</span> Упаковываем и отправляем</div>
             <div class="plp-step"><span>3</span> Платите при доставке</div>
+          </div>
+          <div class="plp-reward-card" id="plpRewardCard">
+            <div class="plp-reward-copy">
+              <span class="plp-reward-kicker">Подарок к заказу</span>
+              <h4>Заберите бонус на следующую покупку</h4>
+              <p>После открытия подарка вы получите персональный бонус на любой товар на главной странице.</p>
+            </div>
+            <button type="button" class="plp-reward-trigger" id="plpRewardTrigger" onclick="revealReward()">
+              <span class="plp-giftbox" id="plpGiftbox">
+                <span class="plp-gift-lid"></span>
+                <span class="plp-gift-body"></span>
+                <span class="plp-gift-ribbon v"></span>
+                <span class="plp-gift-ribbon h"></span>
+              </span>
+              <span class="plp-reward-trigger-text">Забрать подарок</span>
+            </button>
+            <div class="plp-reward-result hidden" id="plpRewardResult">
+              <div class="plp-reward-badge">Ваш бонус: -50%</div>
+              <strong>Скидка 50% на любой следующий товар</strong>
+              <p>Покажите этот бонус при следующем подтверждении заказа, и мы применим его к выбранному товару.</p>
+              <div class="plp-reward-code-wrap">
+                <span>Код бонуса</span>
+                <div class="plp-reward-code" id="plpRewardCode">FRANGELLO50</div>
+              </div>
+              <a href="/#products" class="plp-reward-link">Выбрать ещё товар со скидкой</a>
+            </div>
           </div>
           <a href="/" class="plp-back-btn">← Продолжить покупки</a>
         </div>
@@ -166,7 +241,53 @@
     </div>
   </section>
 
+  <section class="plp-consult-section">
+    <div class="plp-container">
+      <div class="plp-consult-card" id="plpConsultCard">
+        <div class="plp-consult-head">
+          <div>
+            <h3>Нужна консультация по товару?</h3>
+            <p>Если хотите уточнить вариант, размер, модель или просто посоветоваться перед заказом, оставьте номер телефона и имя. Мы свяжемся с вами и поможем выбрать.</p>
+          </div>
+          <span class="plp-consult-badge">Консультация</span>
+        </div>
+        <form class="plp-consult-form" onsubmit="submitConsultationRequest(event)">
+          <div class="plp-consult-grid">
+            <input type="text" id="plpConsultName" placeholder="Ваше имя" required autocomplete="name" minlength="3" />
+            <input type="tel" id="plpConsultPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" inputmode="tel" />
+          </div>
+          <button type="submit" class="plp-consult-btn" id="plpConsultBtn">Получить консультацию</button>
+          <p class="plp-consult-legal">
+            Отправляя заявку, вы принимаете <a href="/privacy.html">политику обработки данных</a>.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-logo">
+      <span class="logo-icon sm">F</span>
+      <span class="logo-main" style="color:#fff">Frangello By</span>
+    </div>
+    <p class="footer-text">Интернет-магазин товаров для дома и кухни · Беларусь</p>
+    <div class="footer-requisites">
+      <p><strong>ИП БУАЗЗА ФАРЕС</strong></p>
+      <p>г. Брест, ул. Заводская 2-я д. 4 корп. 4, кв. 202, эт. 2</p>
+      <p>УНП: 291900766</p>
+    </div>
+    <div class="footer-legal-links">
+      <a href="/privacy.html">Политика конфиденциальности</a>
+      <a href="/offer.html">Публичная оферта</a>
+      <a href="/terms.html">Условия использования</a>
+      <a href="/returns.html">Доставка и возврат</a>
+    </div>
+    <p class="footer-copy">© 2024 Frangello By. Все права защищены.</p>
+  </div>
+</footer>
 
 <!-- STICKY ORDER BAR -->
 <div class="sticky-order-bar hidden" id="stickyBar">
@@ -175,6 +296,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="/js/tracking.js"></script>
 <script src="/js/product.js"></script>
 </body>
 </html>

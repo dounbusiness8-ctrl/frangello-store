@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const {
   DEFAULT_ADMIN_PASSWORD,
@@ -14,6 +15,8 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ready = initSampleData();
+const FB_PIXEL_ID = process.env.FB_PIXEL_ID || '2310514779326152';
+const FB_ACCESS_TOKEN = process.env.FB_ACCESS_TOKEN || 'EAAJHIziUZCH4BQ1WTF8L2zaZBDRNFTLE8GDaio3YvZAeUIhQnRyeeb6kacX4gMGMGra2CIpRXskHjTLZBM2naG18GxkiO718dKrqooO2FckLOdQUWaJLZAwYWDXIuNYeVluBVlGg96xVwhlJxqe4mT5cHCytsvIaBURqBz5XFEHuruhNZBButYAIFBTNrFOi8rrAZDZD';
 
 app.disable('x-powered-by');
 app.use(express.json());
@@ -30,6 +33,69 @@ app.use(async (req, res, next) => {
 
 function fileUrl(name) {
   return path.join(__dirname, 'public', name);
+}
+
+function sha256(value) {
+  return crypto.createHash('sha256').update(String(value || '').trim().toLowerCase()).digest('hex');
+}
+
+function validateOrderContact(name, phone) {
+  const cleanName = String(name || '').replace(/\s+/g, ' ').trim();
+  const phoneDigits = String(phone || '').replace(/\D/g, '');
+
+  if (cleanName.length < 3) {
+    return 'Name must be at least 3 characters long';
+  }
+
+  if (!/[A-Za-zА-Яа-яЁё]/.test(cleanName)) {
+    return 'Name must contain letters';
+  }
+
+  if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+    return 'Phone number is invalid';
+  }
+
+  return '';
+}
+
+async function sendMetaConversion({ req, order, eventId }) {
+  if (!FB_PIXEL_ID || !FB_ACCESS_TOKEN) return;
+
+  const eventName = order.orderType === 'consultation' ? 'Lead' : 'Purchase';
+  const payload = {
+    data: [{
+      event_name: eventName,
+      event_time: Math.floor(Date.now() / 1000),
+      event_id: eventId || order.id,
+      action_source: 'website',
+      event_source_url: req.body?.trackingData?.eventSourceUrl || req.get('referer') || '',
+      user_data: {
+        ph: order.phone ? [sha256(order.phone.replace(/\D/g, ''))] : undefined,
+        fn: order.name ? [sha256(order.name.split(' ')[0])] : undefined,
+        client_ip_address: req.ip,
+        client_user_agent: req.get('user-agent') || '',
+        fbp: req.body?.trackingData?.fbp || undefined,
+        fbc: req.body?.trackingData?.fbc || undefined
+      },
+      custom_data: {
+        currency: 'BYN',
+        value: Number(order.price || 0),
+        content_name: order.productName,
+        content_ids: [order.productId],
+        content_type: 'product'
+      }
+    }]
+  };
+
+  try {
+    await fetch(`https://graph.facebook.com/v20.0/${FB_PIXEL_ID}/events?access_token=${FB_ACCESS_TOKEN}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.error('Meta CAPI error:', error.message);
+  }
 }
 
 async function adminAuth(req, res, next) {
@@ -81,9 +147,13 @@ app.get('/api/config/public', async (req, res, next) => {
 
 app.post('/api/orders', async (req, res, next) => {
   try {
-    const { name, phone, productId, productName, price } = req.body;
+    const { name, phone, productId, productName, price, variantSelection, variantLabel, orderType, eventId } = req.body;
     if (!name || !phone || !productId) {
       return res.status(400).json({ error: 'Missing fields' });
+    }
+    const validationError = validateOrderContact(name, phone);
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
     }
 
     const orders = await readJSON('orders.json', []);
@@ -94,12 +164,16 @@ app.post('/api/orders', async (req, res, next) => {
       productId,
       productName,
       price,
+      variantSelection: variantSelection || {},
+      variantLabel: variantLabel || '',
+      orderType: orderType === 'consultation' ? 'consultation' : 'order',
       status: 'new',
       createdAt: new Date().toISOString()
     };
 
     orders.unshift(order);
     await writeJSON('orders.json', orders);
+    sendMetaConversion({ req, order, eventId });
     res.json({ success: true, orderId: order.id });
   } catch (error) {
     next(error);

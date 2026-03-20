@@ -4,10 +4,12 @@ let collections = [];
 let activeCollection = 'all';
 let config = {};
 let currentProduct = null;
+let activeReward = null;
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function init() {
   await Promise.all([loadConfig(), loadCollections()]);
+  loadRewardBanner();
   await loadProducts();
   initHeader();
 }
@@ -100,29 +102,56 @@ function renderProducts(list) {
   noProducts.classList.add('hidden');
   grid.innerHTML = list.map((p, i) => {
     const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+    const variantSummary = Array.isArray(p.variants) && p.variants.length
+      ? p.variants.map(v => v.name).filter(Boolean).join(' / ')
+      : '';
+    const rewardNote = activeReward
+      ? `<div class="product-reward-note">🎁 Ваш бонус -50% активен</div>`
+      : '';
+    const ctaText = activeReward ? 'Открыть товар с бонусом' : 'Подробнее и заказать';
     return `
-    <div class="product-card" style="animation-delay:${i * 0.06}s">
+    <div class="product-card ${activeReward ? 'reward-ready' : ''}" style="animation-delay:${i * 0.06}s">
       <a href="/product/${p.id}" class="product-img-wrap">
         <img src="${p.image || 'https://via.placeholder.com/400x400?text=Product'}"
              alt="${p.name}" loading="lazy"
              onerror="this.src='https://via.placeholder.com/400x400?text=Frangello+By'" />
         ${p.badge ? `<span class="product-badge badge-${p.badge}">${p.badge}</span>` : ''}
+        <div class="product-overlay"><span class="product-overlay-btn">👁 Смотреть товар</span></div>
       </a>
       <div class="product-body">
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.description || ''}</div>
+        ${rewardNote}
+        ${variantSummary ? `<div class="product-variants-hint">Доступно: ${variantSummary}</div>` : ''}
         <div class="product-prices">
-          <span class="product-price">${p.price.toLocaleString()} ${config.currency || 'DA'}</span>
-          ${p.oldPrice ? `<span class="product-old-price">${p.oldPrice.toLocaleString()} ${config.currency || 'DA'}</span>` : ''}
+          <span class="product-price">${p.price.toLocaleString()} ${config.currency || 'BYN'}</span>
+          ${p.oldPrice ? `<span class="product-old-price">${p.oldPrice.toLocaleString()} ${config.currency || 'BYN'}</span>` : ''}
           ${discount > 0 ? `<span class="product-discount">-${discount}%</span>` : ''}
         </div>
         <a class="btn-order" href="/product/${p.id}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03L20.7 6H5.21l-.94-2H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.96C5 17.1 5.9 18 7 18h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg>
-          Подробнее и заказать
+          ${ctaText}
         </a>
       </div>
     </div>`;
   }).join('');
+}
+
+function loadRewardBanner() {
+  try {
+    const stored = localStorage.getItem('frangelloReward');
+    if (!stored) return;
+    const reward = JSON.parse(stored);
+    if (!reward || reward.discount !== 50 || !reward.code) return;
+    activeReward = reward;
+
+    const banner = document.getElementById('rewardBanner');
+    const code = document.getElementById('rewardBannerCode');
+    if (banner && code) {
+      code.textContent = reward.code;
+      banner.classList.remove('hidden');
+    }
+  } catch {}
 }
 
 // ─── ORDER MODAL ──────────────────────────────────────────────────────────────
@@ -139,7 +168,7 @@ function openOrder(productId) {
   document.getElementById('modalImg').src = currentProduct.image || '';
   document.getElementById('modalProductName').textContent = currentProduct.name;
   document.getElementById('modalPrice').textContent =
-    `${currentProduct.price.toLocaleString()} ${config.currency || 'DA'}`;
+    `${currentProduct.price.toLocaleString()} ${config.currency || 'BYN'}`;
   document.getElementById('customerName').value = '';
   document.getElementById('customerPhone').value = '';
 
