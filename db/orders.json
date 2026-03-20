@@ -1,5 +1,18 @@
 [
   {
+    "id": "34ae1673-7c3b-43fd-ae3c-01c8d2043b8e",
+    "name": "test",
+    "phone": "37525529333",
+    "productId": "28dc3c01-2836-40ea-9b6b-155822d514b8",
+    "productName": "Беспроводные наушники Pro X",
+    "price": 105,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "status": "new",
+    "createdAt": "2026-03-20T17:36:34.410Z"
+  },
+  {
     "id": "56cfb5f5-87fb-4426-ac4f-97a552b5a18f",
     "name": "Фарес Буазза",
     "phone": "+375 29 123 45 67",
