@@ -25,14 +25,21 @@ async function ensureLocalDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
 }
 
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('blob_timeout')), ms))
+  ]);
+}
+
 async function readRaw(name) {
   if (USE_BLOB_STORE) {
     try {
       const { list } = getBlobSdk();
-      const { blobs } = await list({ prefix: blobPath(name), limit: 10 });
+      const { blobs } = await withTimeout(list({ prefix: blobPath(name), limit: 10 }), 8000);
       const found = blobs.find(b => b.pathname === blobPath(name));
       if (!found) return null;
-      const res = await fetch(found.url);
+      const res = await withTimeout(fetch(found.url), 8000);
       if (!res.ok) return null;
       return await res.text();
     } catch {
@@ -51,11 +58,11 @@ async function readRaw(name) {
 async function writeRaw(name, value) {
   if (USE_BLOB_STORE) {
     const { put } = getBlobSdk();
-    await put(blobPath(name), value, {
+    await withTimeout(put(blobPath(name), value, {
       access: 'public',
       allowOverwrite: true,
       contentType: 'application/json'
-    });
+    }), 10000);
     return;
   }
 
@@ -89,6 +96,7 @@ async function readConfig() {
 }
 
 async function initSampleData() {
+  try {
   const collections = await readRaw('collections.json');
   if (!collections) {
     await writeJSON('collections.json', [
@@ -225,6 +233,9 @@ async function initSampleData() {
       heroTitle: 'Товары, которые хочется заказать сразу',
       heroSubtitle: 'Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении'
     });
+  }
+  } catch (err) {
+    console.error('initSampleData error:', err);
   }
 }
 
