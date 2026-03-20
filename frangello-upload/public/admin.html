@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Frangello By</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="logo-icon">F</span>
+      <div>
+        <span class="logo-main">Frangello By</span>
+        <span class="logo-by">Admin Panel</span>
+      </div>
+    </div>
+    <h2>Sign In</h2>
+    <p>Enter your admin password to continue</p>
+    <form onsubmit="doLogin(event)">
+      <div class="login-field">
+        <input type="password" id="loginPw" placeholder="Admin password" required />
+      </div>
+      <button type="submit" class="btn-login">Sign In</button>
+    </form>
+    <p class="login-hint">Default: <code>frangello2024</code></p>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="admin-layout" id="adminLayout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">F</span>
+      <div>
+        <span class="logo-main">Frangello</span>
+        <span class="logo-by">Admin</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-tab="products" onclick="switchTab('products')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5v-3h-2V17h-2v-4.5H9V15H7V9h2v2.5h2V9h2v4.5h2V11h2v4.5h-2z"/></svg>
+        Products
+      </a>
+      <a class="nav-item" data-tab="orders" onclick="switchTab('orders')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        Orders
+        <span class="nav-badge" id="newOrderBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" data-tab="collections" onclick="switchTab('collections')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Collections
+      </a>
+      <a class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+        Settings
+      </a>
+    </nav>
+    <a class="nav-item store-link" href="/" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      View Store
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 class="admin-page-title" id="pageTitle">Dashboard</h1>
+      <div class="topbar-right">
+        <span class="admin-user">Admin</span>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total Orders</div></div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">🔔</div>
+          <div class="stat-info"><div class="stat-num" id="s-new">0</div><div class="stat-label">New Orders</div></div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">📅</div>
+          <div class="stat-info"><div class="stat-num" id="s-today">0</div><div class="stat-label">Today</div></div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-icon">🛍️</div>
+          <div class="stat-info"><div class="stat-num" id="s-products">0</div><div class="stat-label">Products</div></div>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <section class="section-card analytics-overview">
+          <div class="section-card-header">
+            <div>
+              <h3>Shop Analytics</h3>
+              <p class="section-card-sub">A quick view of how your store is performing right now.</p>
+            </div>
+          </div>
+          <div class="analytics-kpis">
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Delivered Revenue</span>
+              <strong class="mini-kpi-value" id="a-revenue">0 BYN</strong>
+              <span class="mini-kpi-note" id="a-revenue-note">No delivered orders yet</span>
+            </div>
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Average Order Value</span>
+              <strong class="mini-kpi-value" id="a-average">0 BYN</strong>
+              <span class="mini-kpi-note" id="a-average-note">Calculated from all orders</span>
+            </div>
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Top Product</span>
+              <strong class="mini-kpi-value" id="a-top-product">No data yet</strong>
+              <span class="mini-kpi-note" id="a-top-product-note">Will update as orders come in</span>
+            </div>
+          </div>
+
+          <div class="progress-panel">
+            <div class="progress-header">
+              <h4>Order Quality Mix</h4>
+              <span id="a-quality-summary">Waiting for more sales data</span>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Delivered</span>
+                <strong id="a-delivered-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill success" id="a-delivered-bar"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Confirmed</span>
+                <strong id="a-confirmed-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill info" id="a-confirmed-bar"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Cancelled</span>
+                <strong id="a-cancelled-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill danger" id="a-cancelled-bar"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card analytics-trend-card">
+          <div class="section-card-header">
+            <div>
+              <h3>7-Day Order Trend</h3>
+              <p class="section-card-sub">See when demand is picking up.</p>
+            </div>
+          </div>
+          <div class="trend-chart" id="trendChart"></div>
+        </section>
+      </div>
+
+      <div class="analytics-grid secondary">
+        <section class="section-card">
+          <div class="section-card-header">
+            <div>
+              <h3>Best Selling Products</h3>
+              <p class="section-card-sub">Products attracting the most orders.</p>
+            </div>
+          </div>
+          <div class="analytics-list" id="topProductsList"></div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-card-header">
+            <div>
+              <h3>Sales Momentum</h3>
+              <p class="section-card-sub">A simple pulse-check for your store growth.</p>
+            </div>
+          </div>
+          <div class="momentum-grid">
+            <div class="momentum-card">
+              <span class="momentum-label">Last 7 Days</span>
+              <strong id="a-last7">0 orders</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">This Month</span>
+              <strong id="a-this-month">0 orders</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">Visible Products</span>
+              <strong id="a-visible-products">0 items</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">New Order Share</span>
+              <strong id="a-new-share">0%</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3>Recent Orders</h3>
+          <button class="btn-text" onclick="switchTab('orders')">View All →</button>
+        </div>
+        <div id="recentOrdersList"></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="tab-content" id="tab-products">
+      <div class="tab-header">
+        <h2>Products</h2>
+        <button class="btn-primary" onclick="openProductModal()">+ Add Product</button>
+      </div>
+      <div class="admin-products-grid" id="adminProductsGrid"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div class="tab-content" id="tab-orders">
+      <div class="tab-header">
+        <h2>Orders</h2>
+        <div class="filter-row">
+          <select id="orderFilter" onchange="filterOrders()">
+            <option value="all">All Orders</option>
+            <option value="new">New</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="orders-table-wrap">
+        <table class="orders-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COLLECTIONS TAB -->
+    <div class="tab-content" id="tab-collections">
+      <div class="tab-header">
+        <h2>Collections</h2>
+        <button class="btn-primary" onclick="openCollectionModal()">+ Add Collection</button>
+      </div>
+      <div class="collections-admin-grid" id="collectionsAdminGrid"></div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-content" id="tab-settings">
+      <div class="tab-header"><h2>Store Settings</h2></div>
+      <div class="settings-form" id="settingsForm">
+        <div class="settings-section">
+          <h3>Store Info</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Store Name</label>
+              <input type="text" id="cfg-storeName" placeholder="Frangello By" />
+            </div>
+            <div class="form-group">
+              <label>Currency</label>
+              <input type="text" id="cfg-currency" placeholder="BYN" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" id="cfg-tagline" placeholder="Premium Gadgets & Kitchen Essentials" />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Number (with country code, e.g. 213555123456)</label>
+            <input type="text" id="cfg-whatsapp" placeholder="213555123456" />
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>Hero Section</h3>
+          <div class="form-group">
+            <label>Hero Title</label>
+            <input type="text" id="cfg-heroTitle" placeholder="Discover Premium Products" />
+          </div>
+          <div class="form-group">
+            <label>Hero Subtitle</label>
+            <input type="text" id="cfg-heroSubtitle" placeholder="Gadgets & Kitchen Essentials delivered to your door" />
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>Security</h3>
+          <div class="form-group">
+            <label>New Admin Password</label>
+            <input type="password" id="cfg-adminPassword" placeholder="Leave blank to keep current" />
+          </div>
+        </div>
+        <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModalOverlay" onclick="closeProductModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <form id="productForm" onsubmit="saveProduct(event)">
+      <input type="hidden" id="editProductId" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" id="pName" required placeholder="e.g. Smart Blender Pro" />
+        </div>
+        <div class="form-group">
+          <label>Collection</label>
+          <select id="pCollection">
+            <option value="">Select collection</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="pDesc" rows="3" placeholder="Short product description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (BYN) *</label>
+          <input type="number" id="pPrice" required placeholder="2500" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Original Price (BYN)</label>
+          <input type="number" id="pOldPrice" placeholder="3500" min="0" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Badge</label>
+          <select id="pBadge">
+            <option value="">No Badge</option>
+            <option value="NEW">NEW</option>
+            <option value="HOT">HOT</option>
+            <option value="SALE">SALE</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Visible in Store</label>
+          <select id="pVisible">
+            <option value="true">Yes – Visible</option>
+            <option value="false">No – Hidden</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="url" id="pImage" placeholder="https://..." />
+        <div id="imagePreviewWrap" style="margin-top:8px;display:none">
+          <img id="imagePreview" src="" alt="Preview" style="max-height:120px;border-radius:8px;object-fit:cover" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
+        <button type="submit" class="btn-primary" id="saveProductBtn">Save Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- COLLECTION MODAL -->
+<div class="modal-overlay" id="collectionModalOverlay" onclick="closeCollectionModal()">
+  <div class="modal-box small" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Add Collection</h3>
+      <button class="modal-close" onclick="closeCollectionModal()">✕</button>
+    </div>
+    <form onsubmit="saveCollection(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" id="cName" required placeholder="e.g. Kitchen" />
+        </div>
+        <div class="form-group">
+          <label>Slug *</label>
+          <input type="text" id="cSlug" required placeholder="e.g. kitchen" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Icon (emoji)</label>
+        <input type="text" id="cIcon" placeholder="🍳" maxlength="4" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeCollectionModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Add Collection</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="adminToast"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

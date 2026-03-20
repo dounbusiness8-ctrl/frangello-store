@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "All",
+    "slug": "all",
+    "icon": "✨"
+  },
+  {
+    "id": "2",
+    "name": "Kitchen",
+    "slug": "kitchen",
+    "icon": "🍳"
+  },
+  {
+    "id": "3",
+    "name": "Gadgets",
+    "slug": "gadgets",
+    "icon": "⚡"
+  },
+  {
+    "id": "4",
+    "name": "Home",
+    "slug": "home",
+    "icon": "🏠"
+  },
+  {
+    "id": "5",
+    "name": "Lifestyle",
+    "slug": "lifestyle",
+    "icon": "💫"
+  }
+]

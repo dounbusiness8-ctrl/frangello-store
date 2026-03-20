@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/admin",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/product/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/index"
+    }
+  ]
+}
