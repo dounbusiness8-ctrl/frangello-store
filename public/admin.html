@@ -105,6 +105,111 @@
         </div>
       </div>
 
+      <div class="analytics-grid">
+        <section class="section-card analytics-overview">
+          <div class="section-card-header">
+            <div>
+              <h3>Shop Analytics</h3>
+              <p class="section-card-sub">A quick view of how your store is performing right now.</p>
+            </div>
+          </div>
+          <div class="analytics-kpis">
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Delivered Revenue</span>
+              <strong class="mini-kpi-value" id="a-revenue">0 DA</strong>
+              <span class="mini-kpi-note" id="a-revenue-note">No delivered orders yet</span>
+            </div>
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Average Order Value</span>
+              <strong class="mini-kpi-value" id="a-average">0 DA</strong>
+              <span class="mini-kpi-note" id="a-average-note">Calculated from all orders</span>
+            </div>
+            <div class="mini-kpi">
+              <span class="mini-kpi-label">Top Product</span>
+              <strong class="mini-kpi-value" id="a-top-product">No data yet</strong>
+              <span class="mini-kpi-note" id="a-top-product-note">Will update as orders come in</span>
+            </div>
+          </div>
+
+          <div class="progress-panel">
+            <div class="progress-header">
+              <h4>Order Quality Mix</h4>
+              <span id="a-quality-summary">Waiting for more sales data</span>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Delivered</span>
+                <strong id="a-delivered-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill success" id="a-delivered-bar"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Confirmed</span>
+                <strong id="a-confirmed-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill info" id="a-confirmed-bar"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span>Cancelled</span>
+                <strong id="a-cancelled-pct">0%</strong>
+              </div>
+              <div class="progress-track"><div class="progress-fill danger" id="a-cancelled-bar"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card analytics-trend-card">
+          <div class="section-card-header">
+            <div>
+              <h3>7-Day Order Trend</h3>
+              <p class="section-card-sub">See when demand is picking up.</p>
+            </div>
+          </div>
+          <div class="trend-chart" id="trendChart"></div>
+        </section>
+      </div>
+
+      <div class="analytics-grid secondary">
+        <section class="section-card">
+          <div class="section-card-header">
+            <div>
+              <h3>Best Selling Products</h3>
+              <p class="section-card-sub">Products attracting the most orders.</p>
+            </div>
+          </div>
+          <div class="analytics-list" id="topProductsList"></div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-card-header">
+            <div>
+              <h3>Sales Momentum</h3>
+              <p class="section-card-sub">A simple pulse-check for your store growth.</p>
+            </div>
+          </div>
+          <div class="momentum-grid">
+            <div class="momentum-card">
+              <span class="momentum-label">Last 7 Days</span>
+              <strong id="a-last7">0 orders</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">This Month</span>
+              <strong id="a-this-month">0 orders</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">Visible Products</span>
+              <strong id="a-visible-products">0 items</strong>
+            </div>
+            <div class="momentum-card">
+              <span class="momentum-label">New Order Share</span>
+              <strong id="a-new-share">0%</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
       <div class="section-card">
         <div class="section-card-header">
           <h3>Recent Orders</h3>

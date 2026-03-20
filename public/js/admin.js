@@ -4,6 +4,7 @@ let allOrders = [];
 let allProducts = [];
 let allCollections = [];
 let currentEditId = null;
+let currentConfig = {};
 
 // ─── LOGIN ───────────────────────────────────────────────────────────────────
 async function doLogin(e) {
@@ -74,6 +75,8 @@ async function loadStats() {
       const badge = document.getElementById('newOrderBadge');
       badge.textContent = s.newOrders;
       badge.style.display = 'flex';
+    } else {
+      document.getElementById('newOrderBadge').style.display = 'none';
     }
   } catch {}
 }
@@ -85,6 +88,7 @@ async function loadOrders() {
     allOrders = await res.json();
     renderOrders(allOrders);
     renderRecentOrders(allOrders.slice(0, 5));
+    renderAnalytics();
   } catch {}
 }
 
@@ -178,6 +182,7 @@ async function loadProducts() {
     const res = await fetch('/api/admin/products', { headers: authHeaders() });
     allProducts = await res.json();
     renderAdminProducts(allProducts);
+    renderAnalytics();
   } catch {}
 }
 
@@ -370,12 +375,14 @@ async function loadSettings() {
   try {
     const res = await fetch('/api/admin/config', { headers: authHeaders() });
     const cfg = await res.json();
+    currentConfig = cfg || {};
     document.getElementById('cfg-storeName').value = cfg.storeName || '';
     document.getElementById('cfg-currency').value = cfg.currency || '';
     document.getElementById('cfg-tagline').value = cfg.tagline || '';
     document.getElementById('cfg-whatsapp').value = cfg.whatsapp || '';
     document.getElementById('cfg-heroTitle').value = cfg.heroTitle || '';
     document.getElementById('cfg-heroSubtitle').value = cfg.heroSubtitle || '';
+    renderAnalytics();
   } catch {}
 }
 
@@ -394,8 +401,182 @@ async function saveSettings() {
   await fetch('/api/admin/config', {
     method: 'PUT', headers: authHeaders(), body: JSON.stringify(data)
   });
+  currentConfig = { ...currentConfig, ...data };
   if (newPw) adminPassword = newPw;
+  renderAnalytics();
   showToast('Settings saved!', 'success');
+}
+
+// ─── ANALYTICS ───────────────────────────────────────────────────────────────
+function renderAnalytics() {
+  renderOverviewAnalytics();
+  renderTrendChart();
+  renderTopProducts();
+  renderMomentumCards();
+}
+
+function renderOverviewAnalytics() {
+  const currency = currentConfig.currency || 'DA';
+  const totalOrders = allOrders.length;
+  const deliveredOrders = allOrders.filter(order => order.status === 'delivered');
+  const confirmedOrders = allOrders.filter(order => order.status === 'confirmed');
+  const cancelledOrders = allOrders.filter(order => order.status === 'cancelled');
+  const totalRevenue = deliveredOrders.reduce((sum, order) => sum + Number(order.price || 0), 0);
+  const totalOrderValue = allOrders.reduce((sum, order) => sum + Number(order.price || 0), 0);
+  const averageOrderValue = totalOrders ? Math.round(totalOrderValue / totalOrders) : 0;
+  const topProduct = getTopProducts(1)[0];
+
+  document.getElementById('a-revenue').textContent = formatMoney(totalRevenue, currency);
+  document.getElementById('a-revenue-note').textContent = deliveredOrders.length
+    ? `${deliveredOrders.length} delivered ${deliveredOrders.length === 1 ? 'order' : 'orders'}`
+    : 'No delivered orders yet';
+
+  document.getElementById('a-average').textContent = formatMoney(averageOrderValue, currency);
+  document.getElementById('a-average-note').textContent = totalOrders
+    ? `Based on ${totalOrders} total ${totalOrders === 1 ? 'order' : 'orders'}`
+    : 'Calculated from all orders';
+
+  document.getElementById('a-top-product').textContent = topProduct ? topProduct.name : 'No data yet';
+  document.getElementById('a-top-product-note').textContent = topProduct
+    ? `${topProduct.count} ${topProduct.count === 1 ? 'order' : 'orders'} • ${formatMoney(topProduct.revenue, currency)} potential`
+    : 'Will update as orders come in';
+
+  const deliveredPct = totalOrders ? Math.round((deliveredOrders.length / totalOrders) * 100) : 0;
+  const confirmedPct = totalOrders ? Math.round((confirmedOrders.length / totalOrders) * 100) : 0;
+  const cancelledPct = totalOrders ? Math.round((cancelledOrders.length / totalOrders) * 100) : 0;
+
+  setProgressValue('a-delivered', deliveredPct);
+  setProgressValue('a-confirmed', confirmedPct);
+  setProgressValue('a-cancelled', cancelledPct);
+
+  const qualitySummary = totalOrders
+    ? cancelledPct <= 15
+      ? 'Healthy order quality with low cancellation pressure'
+      : 'Watch cancellations and follow up faster on new leads'
+    : 'Waiting for more sales data';
+  document.getElementById('a-quality-summary').textContent = qualitySummary;
+}
+
+function renderTrendChart() {
+  const chart = document.getElementById('trendChart');
+  const days = getLast7DaysData();
+  const maxValue = Math.max(...days.map(day => day.count), 1);
+
+  chart.innerHTML = days.map(day => {
+    const height = Math.max(10, Math.round((day.count / maxValue) * 100));
+    return `
+      <div class="trend-bar-wrap">
+        <div class="trend-bar-value">${day.count}</div>
+        <div class="trend-bar-track">
+          <div class="trend-bar-fill" style="height:${height}%"></div>
+        </div>
+        <div class="trend-bar-label">${day.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTopProducts() {
+  const list = document.getElementById('topProductsList');
+  const currency = currentConfig.currency || 'DA';
+  const topProducts = getTopProducts(5);
+
+  if (!topProducts.length) {
+    list.innerHTML = '<div class="empty-state" style="box-shadow:none;border-radius:0;padding:40px 0"><span>📈</span><p>Your best sellers will appear after the first orders.</p></div>';
+    return;
+  }
+
+  list.innerHTML = topProducts.map(item => `
+    <div class="analytics-list-row">
+      <div>
+        <div class="analytics-list-name">${esc(item.name)}</div>
+        <div class="analytics-list-meta">${item.delivered} delivered • ${item.pending} still in progress</div>
+      </div>
+      <div class="analytics-list-value">
+        <strong>${item.count} ${item.count === 1 ? 'order' : 'orders'}</strong>
+        <span>${formatMoney(item.revenue, currency)} total value</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderMomentumCards() {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(now.getDate() - 6);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const visibleProducts = allProducts.filter(product => product.visible !== false).length;
+  const last7 = allOrders.filter(order => new Date(order.createdAt) >= startOfDay(sevenDaysAgo)).length;
+  const thisMonth = allOrders.filter(order => new Date(order.createdAt) >= monthStart).length;
+  const newShare = allOrders.length
+    ? Math.round((allOrders.filter(order => order.status === 'new').length / allOrders.length) * 100)
+    : 0;
+
+  document.getElementById('a-last7').textContent = `${last7} ${last7 === 1 ? 'order' : 'orders'}`;
+  document.getElementById('a-this-month').textContent = `${thisMonth} ${thisMonth === 1 ? 'order' : 'orders'}`;
+  document.getElementById('a-visible-products').textContent = `${visibleProducts} ${visibleProducts === 1 ? 'item' : 'items'}`;
+  document.getElementById('a-new-share').textContent = `${newShare}%`;
+}
+
+function getTopProducts(limit = 5) {
+  const byProduct = new Map();
+
+  for (const order of allOrders) {
+    const key = order.productId || order.productName || 'unknown';
+    const existing = byProduct.get(key) || {
+      name: order.productName || 'Unknown product',
+      count: 0,
+      revenue: 0,
+      delivered: 0,
+      pending: 0
+    };
+
+    existing.count += 1;
+    existing.revenue += Number(order.price || 0);
+    if (order.status === 'delivered') existing.delivered += 1;
+    if (order.status === 'new' || order.status === 'confirmed') existing.pending += 1;
+    byProduct.set(key, existing);
+  }
+
+  return Array.from(byProduct.values())
+    .sort((a, b) => (b.count - a.count) || (b.revenue - a.revenue))
+    .slice(0, limit);
+}
+
+function getLast7DaysData() {
+  const formatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' });
+  const today = new Date();
+  const days = [];
+
+  for (let offset = 6; offset >= 0; offset -= 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - offset);
+    const dayStart = startOfDay(date);
+    const nextDay = new Date(dayStart);
+    nextDay.setDate(dayStart.getDate() + 1);
+
+    const count = allOrders.filter(order => {
+      const createdAt = new Date(order.createdAt);
+      return createdAt >= dayStart && createdAt < nextDay;
+    }).length;
+
+    days.push({ label: formatter.format(date), count });
+  }
+
+  return days;
+}
+
+function setProgressValue(prefix, value) {
+  document.getElementById(`${prefix}-pct`).textContent = `${value}%`;
+  document.getElementById(`${prefix}-bar`).style.width = `${value}%`;
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function formatMoney(value, currency) {
+  return `${Number(value || 0).toLocaleString()} ${currency}`;
 }
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────
