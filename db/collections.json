@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "Все товары",
+    "slug": "all",
+    "icon": "✨"
+  },
+  {
+    "id": "2",
+    "name": "Кухня",
+    "slug": "kitchen",
+    "icon": "🍳"
+  },
+  {
+    "id": "3",
+    "name": "Гаджеты",
+    "slug": "gadgets",
+    "icon": "⚡"
+  },
+  {
+    "id": "4",
+    "name": "Дом",
+    "slug": "home",
+    "icon": "🏠"
+  },
+  {
+    "id": "5",
+    "name": "Стиль жизни",
+    "slug": "lifestyle",
+    "icon": "💫"
+  }
+]
