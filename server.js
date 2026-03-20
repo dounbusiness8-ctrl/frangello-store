@@ -350,9 +350,9 @@ app.get('/product/:id', (req, res) => res.sendFile(fileUrl('product.html')));
 app.get('*', (req, res) => res.sendFile(fileUrl('index.html')));
 
 app.use((error, req, res, next) => {
-  console.error(error);
+  console.error('Server error:', error.message, error.stack);
   if (req.path.startsWith('/api/')) {
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', detail: error.message });
   }
   return res.status(500).send('Internal server error');
 });

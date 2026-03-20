@@ -80,15 +80,24 @@ async function readRaw(name) {
 
 async function writeRaw(name, value) {
   if (USE_GITHUB) {
-    // Get existing SHA first (needed to update existing files)
-    let sha;
-    try {
-      const existing = await githubApiGet(name);
-      sha = existing ? existing.sha : undefined;
-    } catch {
-      sha = undefined;
+    // Retry up to 3 times to handle SHA conflicts
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      let sha;
+      try {
+        const existing = await githubApiGet(name);
+        sha = existing ? existing.sha : undefined;
+      } catch {
+        sha = undefined;
+      }
+      try {
+        await githubApiPut(name, value, sha);
+        return;
+      } catch (err) {
+        if (attempt === 3) throw err;
+        // Brief pause before retry on conflict
+        await new Promise(r => setTimeout(r, 300 * attempt));
+      }
     }
-    await githubApiPut(name, value, sha);
     return;
   }
 
