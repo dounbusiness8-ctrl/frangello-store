@@ -21,20 +21,23 @@ function blobPath(name) {
   return `${BLOB_PREFIX}/${name}`;
 }
 
-async function streamToText(stream) {
-  return new Response(stream).text();
-}
-
 async function ensureLocalDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
 }
 
 async function readRaw(name) {
   if (USE_BLOB_STORE) {
-    const { get } = getBlobSdk();
-    const result = await get(blobPath(name), { access: 'private' });
-    if (!result || result.statusCode !== 200 || !result.stream) return null;
-    return streamToText(result.stream);
+    try {
+      const { list } = getBlobSdk();
+      const { blobs } = await list({ prefix: blobPath(name), limit: 10 });
+      const found = blobs.find(b => b.pathname === blobPath(name));
+      if (!found) return null;
+      const res = await fetch(found.url);
+      if (!res.ok) return null;
+      return await res.text();
+    } catch {
+      return null;
+    }
   }
 
   try {
@@ -49,7 +52,7 @@ async function writeRaw(name, value) {
   if (USE_BLOB_STORE) {
     const { put } = getBlobSdk();
     await put(blobPath(name), value, {
-      access: 'private',
+      access: 'public',
       allowOverwrite: true,
       contentType: 'application/json'
     });
