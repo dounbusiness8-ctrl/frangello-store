@@ -317,6 +317,25 @@ function trackProductView(p, currency) {
     content_ids: [p.id],
     content_type: 'product'
   });
+
+  // InitiateCheckout — fires once when user touches the order form
+  let checkoutTracked = false;
+  ['plpName', 'plpPhone'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('focus', () => {
+      if (checkoutTracked || !window.metaTrack) return;
+      checkoutTracked = true;
+      window.metaTrack('InitiateCheckout', {
+        currency,
+        value: Number(p.price || 0),
+        content_name: p.name,
+        content_ids: [p.id],
+        content_type: 'product',
+        num_items: 1
+      });
+    }, { once: true });
+  });
 }
 
 function scrollToForm() {
