@@ -1,5 +1,18 @@
 [
   {
+    "id": "c05cee7e-5532-41af-8568-db9e5981cadc",
+    "name": "Иван Иванов",
+    "phone": "+375291234567",
+    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
+    "productName": "Test",
+    "price": 149,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "status": "new",
+    "createdAt": "2026-03-20T17:17:20.673Z"
+  },
+  {
     "id": "ce156d47-58ee-4239-bb84-57712245f785",
     "name": "Фарес Буазза",
     "phone": "375291234567",
