@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Товар – Frangello By</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/product.css" />
+</head>
+<body class="product-page">
+
+<!-- HEADER -->
+<header class="header scrolled" id="header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">F</span>
+      <div>
+        <span class="logo-main">Frangello</span>
+        <span class="logo-by">By</span>
+      </div>
+    </a>
+    <div class="header-right">
+      <span class="cod-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Оплата при получении
+      </span>
+      <a href="/" class="btn-back">← В магазин</a>
+    </div>
+  </div>
+</header>
+
+<div class="product-loading" id="productLoading"><div class="spinner"></div></div>
+
+<div class="product-not-found hidden" id="productNotFound">
+  <span>😕</span>
+  <h2>Товар не найден</h2>
+  <a href="/">← В магазин</a>
+</div>
+
+<!-- PRODUCT LANDING PAGE -->
+<main class="product-main hidden" id="productMain">
+
+  <section class="plp-hero">
+    <div class="plp-container">
+
+      <!-- LEFT: IMAGE -->
+      <div class="plp-image-col">
+        <div class="plp-image-wrap">
+          <img id="plpImage" src="" alt="" />
+          <div class="plp-badge-wrap">
+            <span class="plp-badge" id="plpBadge" style="display:none"></span>
+          </div>
+          <div class="plp-discount-circle" id="plpDiscountCircle" style="display:none">
+            <span id="plpDiscountPct"></span>
+          </div>
+        </div>
+        <div class="plp-trust-row">
+          <div class="plp-trust-item"><span>💵</span>Оплата при получении</div>
+          <div class="plp-trust-item"><span>📦</span>Быстрая доставка</div>
+          <div class="plp-trust-item"><span>✅</span>Проверенное качество</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: INFO + ORDER FORM -->
+      <div class="plp-info-col">
+
+        <div class="plp-collection-tag" id="plpCollection"></div>
+        <h1 class="plp-product-title" id="plpTitle">Загрузка...</h1>
+        <p class="plp-description" id="plpDesc"></p>
+
+        <!-- PRICE BLOCK -->
+        <div class="plp-price-block">
+          <div class="plp-prices">
+            <span class="plp-price" id="plpPrice"></span>
+            <span class="plp-old-price" id="plpOldPrice" style="display:none"></span>
+          </div>
+          <div class="plp-save-badge" id="plpSaveBadge" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Вы экономите <span id="plpSaveAmount"></span>
+          </div>
+        </div>
+
+        <!-- COD NOTICE -->
+        <div class="plp-cod-notice">
+          <div class="plp-cod-icon">💵</div>
+          <div>
+            <strong>Оплата при получении</strong>
+            <p>Платите только когда товар у вас. Никаких предоплат.</p>
+          </div>
+        </div>
+
+        <!-- ORDER FORM -->
+        <div class="plp-order-form" id="plpOrderForm">
+          <h3 class="plp-form-title">Оформить заказ — введите ваши данные</h3>
+          <form onsubmit="submitProductOrder(event)">
+            <div class="plp-form-group">
+              <label for="plpName">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Ваше имя *
+              </label>
+              <input type="text" id="plpName" placeholder="Введите ваше полное имя" required autocomplete="name" />
+            </div>
+            <div class="plp-form-group">
+              <label for="plpPhone">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                Номер телефона *
+              </label>
+              <input type="tel" id="plpPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" />
+            </div>
+            <button type="submit" class="plp-order-btn" id="plpOrderBtn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03L20.7 6H5.21l-.94-2H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.96C5 17.1 5.9 18 7 18h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg>
+              Заказать — Оплата при получении
+            </button>
+            <p class="plp-form-note">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              Мы позвоним для подтверждения. Оплата только при доставке.
+            </p>
+          </form>
+        </div>
+
+        <!-- SUCCESS STATE -->
+        <div class="plp-success hidden" id="plpSuccess">
+          <div class="plp-success-icon">🎉</div>
+          <h3>Заказ оформлен!</h3>
+          <p>Спасибо, <strong id="plpSuccessName"></strong>! Мы позвоним вам на номер <strong id="plpSuccessPhone"></strong> для подтверждения заказа.</p>
+          <div class="plp-success-steps">
+            <div class="plp-step"><span>1</span> Звоним для подтверждения</div>
+            <div class="plp-step"><span>2</span> Упаковываем и отправляем</div>
+            <div class="plp-step"><span>3</span> Платите при доставке</div>
+          </div>
+          <a href="/" class="plp-back-btn">← Продолжить покупки</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="plp-features-section">
+    <div class="plp-container">
+      <h2 class="plp-features-title">Почему выбирают Frangello By?</h2>
+      <div class="plp-features-grid">
+        <div class="plp-feature-card">
+          <div class="plp-feature-icon">💵</div>
+          <h4>Оплата при получении</h4>
+          <p>Платите наличными при получении. Никакого риска.</p>
+        </div>
+        <div class="plp-feature-card">
+          <div class="plp-feature-icon">📞</div>
+          <h4>Звоним первыми</h4>
+          <p>Перед отправкой мы звоним для подтверждения заказа.</p>
+        </div>
+        <div class="plp-feature-card">
+          <div class="plp-feature-icon">🚚</div>
+          <h4>По всей Беларуси</h4>
+          <p>Доставляем во все регионы за 2–5 рабочих дней.</p>
+        </div>
+        <div class="plp-feature-card">
+          <div class="plp-feature-icon">🔄</div>
+          <h4>Лёгкий возврат</h4>
+          <p>Не устраивает? Возврат в течение 7 дней без проблем.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- STICKY ORDER BAR -->
+<div class="sticky-order-bar hidden" id="stickyBar">
+  <div class="sticky-bar-price" id="stickyPrice"></div>
+  <button class="sticky-bar-btn" onclick="scrollToForm()">Заказать 🛒</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/js/product.js"></script>
+</body>
+</html>
