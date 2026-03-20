@@ -1,5 +1,18 @@
 [
   {
+    "id": "ce156d47-58ee-4239-bb84-57712245f785",
+    "name": "Фарес Буазза",
+    "phone": "375291234567",
+    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
+    "productName": "Аэрофритюрница",
+    "price": 149,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "status": "new",
+    "createdAt": "2026-03-20T17:14:47.053Z"
+  },
+  {
     "id": "8357d898-75d3-4e07-b984-cdcbd4f5bc20",
     "name": "Иван Иванов",
     "phone": "+375291234567",
