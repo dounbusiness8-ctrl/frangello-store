@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "f43e4292-39a3-4d7c-aa9a-b53b73cb333f",
+    "name": "Тест Тестов",
+    "phone": "+375291234567",
+    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
+    "productName": "Тест",
+    "price": 149,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "status": "new",
+    "createdAt": "2026-03-20T17:08:06.221Z"
+  }
+]
