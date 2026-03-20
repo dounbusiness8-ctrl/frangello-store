@@ -192,10 +192,10 @@ async function submitProductOrder(e) {
       document.getElementById('stickyBar').classList.remove('visible');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      showToast('Что-то пошло не так. Попробуйте ещё раз.');
+      showToast(data.detail || data.error || 'Что-то пошло не так. Попробуйте ещё раз.');
     }
-  } catch {
-    showToast('Ошибка соединения. Попробуйте ещё раз.');
+  } catch (err) {
+    showToast('Ошибка соединения: ' + (err.message || 'попробуйте ещё раз'));
   } finally {
     btn.disabled = false;
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03L20.7 6H5.21l-.94-2H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.96C5 17.1 5.9 18 7 18h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg> Заказать с оплатой при получении`;
