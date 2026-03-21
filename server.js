@@ -410,7 +410,7 @@ app.post('/api/orders', async (req, res, next) => {
     // Telegram notification
     try {
       const tgToken = process.env.TELEGRAM_BOT_TOKEN || '8734264069:AAEqdImV5nIdbmOzLi7tXHXaAHHyFpscUSU';
-      const tgChatId = process.env.TELEGRAM_CHAT_ID;
+      const tgChatId = process.env.TELEGRAM_CHAT_ID || '1349075293';
       if (tgChatId) {
         const typeLabel = order.orderType === 'consultation' ? '📋 Консультация' : '🛒 Заказ';
         const variantLine = order.variantLabel ? `\n🎨 Вариант: ${order.variantLabel}` : '';
