@@ -1,19 +1,5 @@
 [
   {
-    "id": "f4763c2b-984f-4638-8c3f-915a22c9d721",
-    "name": "test",
-    "phone": "92139921321",
-    "productId": "a4077d18-e825-4326-b94a-deffcdc1f89e",
-    "productName": "Мини-соковыжималка для лимона",
-    "price": 29,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "customerId": null,
-    "status": "new",
-    "createdAt": "2026-03-21T17:47:51.730Z"
-  },
-  {
     "id": "86669ca5-17a1-44ea-9462-5ac8e28753cf",
     "name": "test",
     "phone": "321312312",
