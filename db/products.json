@@ -1,5 +1,19 @@
 [
   {
+    "id": "dc662d9a-107f-462e-b38f-a4ef3ff3777b",
+    "name": "Откидные крючки для стены",
+    "description": "",
+    "price": 39,
+    "oldPrice": 54,
+    "collection": "",
+    "badge": "HOT",
+    "visible": true,
+    "image": "/api/images/b1b85696-a5cc-4f0f-90a9-7830c9b17baa.jpg",
+    "variants": [],
+    "landingHtml": "",
+    "createdAt": "2026-03-21T15:21:20.421Z"
+  },
+  {
     "id": "a4077d18-e825-4326-b94a-deffcdc1f89e",
     "name": "Мини-соковыжималка для лимона",
     "description": "",
