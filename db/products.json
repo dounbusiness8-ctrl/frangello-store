@@ -1,5 +1,44 @@
 [
   {
+    "id": "a4077d18-e825-4326-b94a-deffcdc1f89e",
+    "name": "Мини-соковыжималка для лимона",
+    "description": "",
+    "price": 39,
+    "oldPrice": 45,
+    "collection": "",
+    "badge": "NEW",
+    "visible": true,
+    "image": "https://lioshoporiginal.myshopify.com/cdn/shop/files/Hfb1e4f4a7be3425e87aa105cdac565a6d_1.png?v=1773231428&width=2560",
+    "variants": [],
+    "storyBlocks": [
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/fac2cf00-30be-4997-92bc-8d5760c6328a.png"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/dfd66c65-e1e7-4939-86a8-16c3a64bb32e.png"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/d85ddefc-72e0-4199-bf96-c20594a31b6e.png"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/cb839bb1-a047-4753-871b-a13add311713.png"
+      }
+    ],
+    "createdAt": "2026-03-21T07:30:18.108Z"
+  },
+  {
     "id": "c0b85613-4bbe-4b97-9a2c-125e9477294e",
     "name": "Kitchen home",
     "description": "home accesoire",
