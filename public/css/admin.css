@@ -729,3 +729,23 @@ textarea { font-family: inherit; resize: vertical; }
   text-decoration: underline;
   pointer-events: all;
 }
+
+/* ─── LANDING HTML PASTE EDITOR ─────────────────────────────────────────────── */
+.landing-paste-editor {
+  min-height: 180px;
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1e293b;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.landing-paste-editor:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.landing-paste-editor:empty::before { content: attr(placeholder); color: #9ca3af; pointer-events: none; }
+.landing-paste-editor img { max-width: 100%; border-radius: 8px; margin: 6px 0; }
+.landing-paste-editor p, .landing-paste-editor div { margin: 4px 0; }

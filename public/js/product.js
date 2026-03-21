@@ -130,7 +130,7 @@ function renderProduct(p) {
   document.getElementById('stickyPrice').textContent = p.price.toLocaleString() + ' ' + currency;
 
   renderVariants(p.variants || []);
-  renderStoryBlocks(p);
+  renderLandingContent(p);
   loadApprovedReviews(p.id);
   loadProductFavoriteState();
   initCutoffTimer();
@@ -166,11 +166,25 @@ function renderVariants(variants) {
   }).join('');
 }
 
-function renderStoryBlocks(p) {
+function renderLandingContent(p) {
   const wrap = document.getElementById('plpStoryStack');
   const section = document.getElementById('plpStorySection');
   if (!wrap) return;
 
+  // New: landingHtml (paste from anywhere)
+  if (p.landingHtml && p.landingHtml.trim()) {
+    if (section) section.style.display = '';
+    wrap.innerHTML = `<div class="plp-landing-html">${p.landingHtml}</div>`;
+    // Make all images responsive
+    wrap.querySelectorAll('img').forEach(img => {
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      img.setAttribute('loading', 'lazy');
+    });
+    return;
+  }
+
+  // Fallback: old storyBlocks format
   const copy = Array.isArray(p.storyBlocks)
     ? p.storyBlocks.filter(item => item && (item.title || item.text || item.image))
     : [];
@@ -186,7 +200,6 @@ function renderStoryBlocks(p) {
 
   wrap.innerHTML = copy.map((item, index) => {
     const titleLen = (item.title || '').length;
-    // Auto-size: short title = big, long title = smaller
     const titleSize = titleLen === 0 ? '' :
       titleLen <= 20 ? 'font-size:clamp(32px,4.5vw,52px)' :
       titleLen <= 35 ? 'font-size:clamp(26px,3.5vw,40px)' :

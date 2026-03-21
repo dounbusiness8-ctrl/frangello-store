@@ -432,9 +432,8 @@ function openProductModal(editId = null) {
   document.getElementById('aiCollectionHint').style.display = 'none';
   uploadedImageData = '';
   currentVariantDraft = [];
-  currentStoryImages = [];
+  document.getElementById('landingHtmlEditor').innerHTML = '';
   renderVariantBuilder();
-  resetStoryEditor();
 
   // Populate collection dropdown
   const sel = document.getElementById('pCollection');
@@ -458,7 +457,7 @@ function openProductModal(editId = null) {
       showImagePreview(p.image);
     }
     currentVariantDraft = normalizeVariants(p.variants);
-    hydrateStoryEditor(p.storyBlocks);
+    document.getElementById('landingHtmlEditor').innerHTML = p.landingHtml || '';
     renderVariantBuilder();
   } else {
     document.getElementById('productModalTitle').textContent = 'Add Product';
@@ -695,7 +694,7 @@ async function saveProduct(e) {
     visible: document.getElementById('pVisible').value === 'true',
     image: uploadedImageData || document.getElementById('pImage').value.trim(),
     variants: collectVariantsFromBuilder(),
-    storyBlocks: collectStoryBlocksFromEditor()
+    landingHtml: document.getElementById('landingHtmlEditor').innerHTML.trim()
   };
 
   try {
