@@ -1,5 +1,44 @@
 [
   {
+    "id": "c0b85613-4bbe-4b97-9a2c-125e9477294e",
+    "name": "Kitchen home",
+    "description": "home accesoire",
+    "price": 250,
+    "oldPrice": 222,
+    "collection": "",
+    "badge": "NEW",
+    "visible": true,
+    "image": "/api/images/7fc1349b-96d8-44ee-9ac7-090e75f8c6b1.jpg",
+    "variants": [],
+    "storyBlocks": [
+      {
+        "label": "",
+        "title": "",
+        "text": "product",
+        "image": "/api/images/4088a5c8-9127-4400-bd66-a8efe592bf24.jpg"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/a4c87d53-97b2-413c-951c-452765758c1d.jpg"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/f7f39f43-7c0f-4804-8a9f-1af162b098f9.png"
+      },
+      {
+        "label": "",
+        "title": "",
+        "text": "",
+        "image": "/api/images/f1bf22f4-815e-4aec-8665-d419728f3434.jpg"
+      }
+    ],
+    "createdAt": "2026-03-21T07:17:17.031Z"
+  },
+  {
     "id": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
     "name": "Мультифункциональная аэрофритюрница Pro",
     "description": "Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.",
