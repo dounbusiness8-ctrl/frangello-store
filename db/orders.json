@@ -1,5 +1,19 @@
 [
   {
+    "id": "c13cbc65-203a-48eb-80bc-53c49994ec61",
+    "name": "Витебск Чкалова",
+    "phone": "+375295930798",
+    "productId": "dc662d9a-107f-462e-b38f-a4ef3ff3777b",
+    "productName": "Откидные крючки для стены",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-21T15:47:19.764Z"
+  },
+  {
     "id": "15ba4765-ed93-4819-ae23-2478571657fa",
     "name": "Александр",
     "phone": "80177969218",
