@@ -58,6 +58,16 @@
         Orders
         <span class="nav-badge" id="newOrderBadge" style="display:none">0</span>
       </a>
+      <a class="nav-item" data-tab="refunds" onclick="switchTab('refunds')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.59 6L11 13.59 8.41 11 7 12.41 11 16.41 18 9.41 16.59 8z"/></svg>
+        Refunds
+        <span class="nav-badge" id="newRefundBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" data-tab="reviews" onclick="switchTab('reviews')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        Reviews
+        <span class="nav-badge" id="pendingReviewBadge" style="display:none">0</span>
+      </a>
       <a class="nav-item" data-tab="collections" onclick="switchTab('collections')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Collections
@@ -278,6 +288,67 @@
       </div>
     </div>
 
+    <div class="tab-content" id="tab-refunds">
+      <div class="tab-header">
+        <h2>Refund Requests</h2>
+        <div class="filter-row">
+          <select id="refundFilter" onchange="filterRefundRequests()">
+            <option value="all">All Requests</option>
+            <option value="new">New</option>
+            <option value="in_review">In Review</option>
+            <option value="resolved">Resolved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="orders-table-wrap">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Product</th>
+              <th>Request</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="refundsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-reviews">
+      <div class="tab-header">
+        <h2>Product Reviews</h2>
+        <div class="filter-row">
+          <select id="reviewFilter" onchange="filterReviews()">
+            <option value="all">All Reviews</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="orders-table-wrap">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Product</th>
+              <th>Review</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reviewsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- COLLECTIONS TAB -->
     <div class="tab-content" id="tab-collections">
       <div class="tab-header">
@@ -406,6 +477,25 @@
         <p class="field-hint">Upload a picture from your device or keep using an image link.</p>
         <div id="imagePreviewWrap" style="margin-top:8px;display:none">
           <img id="imagePreview" src="" alt="Preview" style="max-height:120px;border-radius:8px;object-fit:cover" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Landing Page Content</label>
+        <div class="variants-panel">
+          <div style="display:grid;gap:14px">
+            <p class="field-hint" style="margin-top:0">Write all landing page text here and upload all landing pictures here. The system will organize them into product landing sections automatically when you save.</p>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Landing Text</label>
+              <textarea id="storyContentText" rows="8" placeholder="Use this format for each section:\nLabel: Small top text\nTitle: Main heading\nText: Main paragraph\n\nThen leave one empty line and start the next section."></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Landing Images</label>
+              <input type="file" id="storyImageFiles" accept="image/*" multiple />
+              <textarea id="storyImageUrls" rows="4" placeholder="Or paste image URLs here, one per line"></textarea>
+              <p class="field-hint">You can upload multiple pictures at once. First image goes to first section, second image to second section, and so on.</p>
+              <div id="storyImagesPreview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px"></div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-actions">

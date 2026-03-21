@@ -257,6 +257,18 @@ async function initSampleData() {
     const orders = await readRaw('orders.json');
     if (!orders) await writeJSON('orders.json', []);
 
+    const refundRequests = await readRaw('refund-requests.json');
+    if (!refundRequests) await writeJSON('refund-requests.json', []);
+
+    const reviews = await readRaw('reviews.json');
+    if (!reviews) await writeJSON('reviews.json', []);
+
+    const users = await readRaw('users.json');
+    if (!users) await writeJSON('users.json', []);
+
+    const customerSessions = await readRaw('customer-sessions.json');
+    if (!customerSessions) await writeJSON('customer-sessions.json', []);
+
     const config = await readRaw('config.json');
     if (!config) {
       await writeJSON('config.json', {

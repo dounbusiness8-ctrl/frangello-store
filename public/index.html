@@ -37,8 +37,14 @@
     <nav class="header-nav">
       <a href="#products">Товары</a>
       <a href="#about">О нас</a>
+      <a href="/refund-request.html">Возврат</a>
     </nav>
     <div class="header-right">
+      <div data-customer-slot></div>
+      <a class="viber-link" href="https://msngr.viber.com/contact/?number=%2B375445673738" target="_blank" rel="noopener noreferrer" title="Написать в Viber">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 5.54 2.15 10.01c0 2.82 1.73 5.32 4.35 6.76l-.89 4.06 4.26-2.33c.69.1 1.4.16 2.17.16 5.46 0 9.89-3.54 9.89-8.01C21.93 5.54 17.5 2 12.04 2zm4.69 11.37c-.2.56-1.14 1.03-1.79 1.11-.48.06-1.08.11-3.14-.77-2.63-1.12-4.33-3.88-4.46-4.06-.12-.18-1.06-1.41-1.06-2.69 0-1.28.67-1.9.91-2.16.24-.26.52-.32.69-.32h.5c.16 0 .38-.06.6.45.22.5.74 1.73.81 1.86.06.13.1.29.02.47-.08.18-.12.29-.24.45-.12.16-.25.35-.35.47-.12.14-.25.29-.11.57.14.28.61 1 1.31 1.62.9.8 1.67 1.06 1.91 1.18.24.12.38.1.52-.06.14-.16.58-.67.73-.9.16-.22.31-.18.52-.1.21.08 1.35.64 1.58.75.23.12.39.18.44.29.06.12.06.68-.14 1.24z"/></svg>
+        <span>Viber</span>
+      </a>
       <span class="cod-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
         Оплата при получении
@@ -50,11 +56,21 @@
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
+  <div class="hero-brand-film" aria-hidden="true">
+    <span>FRANGELLO BY</span>
+    <span>CURATED HOME OBJECTS</span>
+    <span>FRANGELLO BY</span>
+    <span>PREMIUM DAILY PICKS</span>
+  </div>
   <div class="hero-content">
     <div class="hero-copy">
       <div class="hero-badge">🔥 Новинки и хиты для дома</div>
       <h1 class="hero-title" id="heroTitle">Товары, которые <span class="hero-title-accent">хочется заказать</span> сразу</h1>
       <p class="hero-sub" id="heroSubtitle">Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении</p>
+      <div class="hero-signature">
+        <span class="hero-signature-line"></span>
+        <span>Frangello By</span>
+      </div>
       <div class="hero-features">
         <div class="hero-feat"><span>📦</span> Доставка 2–5 дней</div>
         <div class="hero-feat"><span>💳</span> Оплата при получении</div>
@@ -140,7 +156,7 @@
 
 <section class="marketplace-section">
   <div class="container">
-    <div class="marketplace-grid">
+    <div class="marketplace-grid reveal-up">
       <article class="marketplace-card featured">
         <span class="marketplace-kicker">Почему выбирают нас</span>
         <h2>Удобная покупка без лишней сложности</h2>
@@ -173,11 +189,11 @@
 <!-- COLLECTIONS FILTER -->
 <section class="collections-section" id="products">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal-up">
       <h2 class="section-title">Хиты, которые выбирают снова</h2>
       <p class="section-sub">Практичные товары для дома и кухни, которые действительно упрощают повседневную жизнь и продаются лучше на понятной, сильной витрине</p>
     </div>
-    <div class="collections-tabs" id="collectionsBar"></div>
+    <div class="collections-tabs reveal-up" id="collectionsBar"></div>
     <div class="products-grid" id="productsGrid"></div>
     <div class="no-products hidden" id="noProducts">
       <span>😕</span>
@@ -188,12 +204,12 @@
 
 <section class="journey-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal-up">
       <span class="section-kicker">Как проходит покупка</span>
       <h2 class="section-title">Максимально простой путь от интереса до заказа</h2>
       <p class="section-sub">Такой сценарий снижает сомнения и помогает клиенту быстрее принять решение</p>
     </div>
-    <div class="journey-grid">
+    <div class="journey-grid reveal-up">
       <article class="journey-card">
         <span>01</span>
         <h3>Замечает выгоду</h3>
@@ -311,6 +327,140 @@
   </div>
 </section>
 
+<section class="brand-story-section">
+  <div class="container">
+    <div class="brand-story-head">
+      <span class="section-kicker">О бренде Frangello</span>
+      <h2 class="section-title">Frangello показывает не только витрину, но и настоящую операционную работу</h2>
+      <p class="section-sub">За аккуратной подачей стоят реальные процессы: команда, упаковка, проверка заказов и понятная организация магазина. Именно это помогает бренду выглядеть уверенно и профессионально в глазах клиента.</p>
+    </div>
+
+    <div class="brand-proof-strip">
+      <div class="brand-proof-pill">
+        <strong>Команда</strong>
+        <span>обрабатывает заявки и подтверждает заказы</span>
+      </div>
+      <div class="brand-proof-pill">
+        <strong>Склад</strong>
+        <span>готовит и упаковывает товары к отправке</span>
+      </div>
+      <div class="brand-proof-pill">
+        <strong>Frangello</strong>
+        <span>держит бренд, сервис и подачу на одном уровне</span>
+      </div>
+    </div>
+
+    <div class="brand-story-grid">
+      <article class="brand-story-card office-card">
+        <div class="brand-story-visual">
+          <img src="https://images.pexels.com/photos/8297478/pexels-photo-8297478.jpeg?auto=compress&w=1200" alt="Команда Frangello в рабочем офисе" loading="lazy" />
+        </div>
+        <div class="brand-story-copy">
+          <span class="brand-story-label">Офис и команда</span>
+          <h3>Команда Frangello держит понятную и быструю работу с заказами</h3>
+          <p>Покупатель видит аккуратный магазин, а внутри это поддерживается реальной координацией: обработка заявок, подтверждение, связь с клиентом и порядок в каждом этапе.</p>
+        </div>
+      </article>
+
+      <article class="brand-story-card warehouse-card">
+        <div class="brand-story-visual">
+          <img src="https://images.pexels.com/photos/6169668/pexels-photo-6169668.jpeg?auto=compress&w=1200" alt="Складская работа и логистика Frangello" loading="lazy" />
+        </div>
+        <div class="brand-story-copy">
+          <span class="brand-story-label">Склад и логистика</span>
+          <h3>Каждый заказ проходит через нормальную подготовку к отправке</h3>
+          <p>Frangello делает ставку на аккуратную сборку, контроль товара и понятную передачу в доставку, чтобы клиенту было проще доверять заказу.</p>
+        </div>
+      </article>
+
+      <article class="brand-story-card packing-card">
+        <div class="brand-story-visual">
+          <img src="https://images.pexels.com/photos/7706455/pexels-photo-7706455.jpeg?auto=compress&w=1200" alt="Упаковка заказов Frangello" loading="lazy" />
+        </div>
+        <div class="brand-story-copy">
+          <span class="brand-story-label">Упаковка и подача</span>
+          <h3>Бренд выглядит дороже, когда упаковка и процесс собраны</h3>
+          <p>Frangello усиливает впечатление не только товарами, но и тем, как оформляется путь клиента: от заявки до готовой отправки.</p>
+        </div>
+      </article>
+
+      <article class="brand-story-card accent story-quote-card">
+        <div class="brand-story-copy">
+          <span class="brand-story-label">Почему это важно</span>
+          <h3>Клиенту легче покупать там, где бренд выглядит реальным и собранным</h3>
+          <p>Frangello делает акцент не на случайной картинке магазина, а на ощущении настоящего бренда: чистая витрина, реальная операционная работа, нормальная упаковка и уверенный сервис.</p>
+          <div class="brand-story-points">
+            <div>Обработка заказов без хаоса</div>
+            <div>Понятная связь с клиентом</div>
+            <div>Сильная брендовая подача Frangello</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="delivery-section">
+  <div class="container">
+    <div class="delivery-shell">
+      <div class="delivery-copy">
+        <span class="section-kicker">Службы доставки</span>
+        <h2 class="section-title">Доставляем через Белпочту и Европочту</h2>
+        <p class="section-sub">Знакомые службы доставки по Беларуси усиливают доверие к магазину и делают получение заказа понятным ещё до оформления.</p>
+        <div class="delivery-points">
+          <div>Отправка по всей Беларуси</div>
+          <div>Понятные способы получения</div>
+          <div>Подтверждение заказа перед отправкой</div>
+        </div>
+      </div>
+
+      <div class="delivery-grid">
+        <article class="delivery-card belpost-card">
+          <div class="delivery-card-top">
+            <div class="delivery-logo">
+              <img
+                src="https://belpost.by/favicon.ico"
+                alt="Белпочта"
+                class="delivery-logo-image"
+                loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+              />
+              <span class="delivery-logo-fallback belpost-fallback">Б</span>
+              <div>
+                <strong>Белпочта</strong>
+                <span>Национальная почтовая доставка</span>
+              </div>
+            </div>
+            <span class="delivery-badge">По Беларуси</span>
+          </div>
+          <p>Подходит клиентам, которые привыкли получать посылки через классическую почтовую сеть и доверяют знакомому формату доставки.</p>
+        </article>
+
+        <article class="delivery-card europost-card">
+          <div class="delivery-card-top">
+            <div class="delivery-logo">
+              <img
+                src="https://evropochta.by/favicon.ico"
+                alt="Европочта"
+                class="delivery-logo-image"
+                loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+              />
+              <span class="delivery-logo-fallback europost-fallback">E</span>
+              <div>
+                <strong>Европочта</strong>
+                <span>Пункты выдачи и удобное получение</span>
+              </div>
+            </div>
+            <span class="delivery-badge">Удобно забрать</span>
+          </div>
+          <p>Удобный вариант для клиентов, которым важно быстро забрать заказ в понятной точке выдачи рядом с домом или работой.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
@@ -329,6 +479,7 @@
       <a href="/offer.html">Публичная оферта</a>
       <a href="/terms.html">Условия использования</a>
       <a href="/returns.html">Доставка и возврат</a>
+      <a href="/refund-request.html">Запрос на возврат</a>
     </div>
     <p class="footer-copy">© 2024 Frangello By. Все права защищены.</p>
   </div>
@@ -341,8 +492,12 @@
 <a class="wa-float" id="waFloat" href="#" target="_blank" title="Написать в WhatsApp" style="display:none">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
+<a class="viber-float" href="https://msngr.viber.com/contact/?number=%2B375445673738" target="_blank" rel="noopener noreferrer" title="Написать в Viber">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 5.54 2.15 10.01c0 2.82 1.73 5.32 4.35 6.76l-.89 4.06 4.26-2.33c.69.1 1.4.16 2.17.16 5.46 0 9.89-3.54 9.89-8.01C21.93 5.54 17.5 2 12.04 2zm4.69 11.37c-.2.56-1.14 1.03-1.79 1.11-.48.06-1.08.11-3.14-.77-2.63-1.12-4.33-3.88-4.46-4.06-.12-.18-1.06-1.41-1.06-2.69 0-1.28.67-1.9.91-2.16.24-.26.52-.32.69-.32h.5c.16 0 .38-.06.6.45.22.5.74 1.73.81 1.86.06.13.1.29.02.47-.08.18-.12.29-.24.45-.12.16-.25.35-.35.47-.12.14-.25.29-.11.57.14.28.61 1 1.31 1.62.9.8 1.67 1.06 1.91 1.18.24.12.38.1.52-.06.14-.16.58-.67.73-.9.16-.22.31-.18.52-.1.21.08 1.35.64 1.58.75.23.12.39.18.44.29.06.12.06.68-.14 1.24z"/></svg>
+</a>
 
 <script src="/js/tracking.js"></script>
+<script src="/js/customer.js"></script>
 <script src="/js/main.js"></script>
 </body>
 </html>

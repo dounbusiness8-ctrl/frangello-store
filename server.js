@@ -19,7 +19,7 @@ const FB_PIXEL_ID = process.env.FB_PIXEL_ID || '2310514779326152';
 const FB_ACCESS_TOKEN = process.env.FB_ACCESS_TOKEN || 'EAAJHIziUZCH4BQ1WTF8L2zaZBDRNFTLE8GDaio3YvZAeUIhQnRyeeb6kacX4gMGMGra2CIpRXskHjTLZBM2naG18GxkiO718dKrqooO2FckLOdQUWaJLZAwYWDXIuNYeVluBVlGg96xVwhlJxqe4mT5cHCytsvIaBURqBz5XFEHuruhNZBButYAIFBTNrFOi8rrAZDZD';
 
 app.disable('x-powered-by');
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
@@ -39,9 +39,44 @@ function sha256(value) {
   return crypto.createHash('sha256').update(String(value || '').trim().toLowerCase()).digest('hex');
 }
 
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(String(password || '')).digest('hex');
+}
+
+function normalizePhone(phone) {
+  return String(phone || '').replace(/\D/g, '');
+}
+
+function sanitizeCustomer(user) {
+  if (!user) return null;
+  const { passwordHash, ...safeUser } = user;
+  return safeUser;
+}
+
+async function getCustomerSession(token) {
+  if (!token) return null;
+  const sessions = await readJSON('customer-sessions.json', []);
+  const session = sessions.find(item => item.token === token);
+  if (!session) return null;
+  const users = await readJSON('users.json', []);
+  const user = users.find(item => item.id === session.userId);
+  if (!user) return null;
+  return { session, user, users, sessions };
+}
+
+async function customerAuth(req, res, next) {
+  const token = req.headers['x-customer-token'];
+  const auth = await getCustomerSession(token);
+  if (!auth) return res.status(401).json({ error: 'Unauthorized' });
+  req.customer = auth.user;
+  req.customerSession = auth.session;
+  req.customerToken = token;
+  next();
+}
+
 function validateOrderContact(name, phone) {
   const cleanName = String(name || '').replace(/\s+/g, ' ').trim();
-  const phoneDigits = String(phone || '').replace(/\D/g, '');
+  const phoneDigits = normalizePhone(phone);
 
   if (cleanName.length < 3) {
     return 'Name must be at least 3 characters long';
@@ -53,6 +88,47 @@ function validateOrderContact(name, phone) {
 
   if (phoneDigits.length < 9 || phoneDigits.length > 15) {
     return 'Phone number is invalid';
+  }
+
+  return '';
+}
+
+function validateReviewInput({ name, phone, text, rating }) {
+  const contactError = validateOrderContact(name, phone);
+  if (contactError) return contactError;
+
+  const cleanText = String(text || '').trim();
+  const numericRating = Number(rating);
+
+  if (cleanText.length < 10) {
+    return 'Review text must be at least 10 characters long';
+  }
+
+  if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
+    return 'Rating is invalid';
+  }
+
+  return '';
+}
+
+function validateCustomerProfile({ name, phone, password }) {
+  const cleanName = String(name || '').replace(/\s+/g, ' ').trim();
+  const digits = normalizePhone(phone);
+
+  if (cleanName.length < 3) {
+    return 'Name must be at least 3 characters long';
+  }
+
+  if (!/[A-Za-zА-Яа-яЁё]/.test(cleanName)) {
+    return 'Name must contain letters';
+  }
+
+  if (digits.length < 9 || digits.length > 15) {
+    return 'Phone number is invalid';
+  }
+
+  if (String(password || '').trim().length < 6) {
+    return 'Password must be at least 6 characters long';
   }
 
   return '';
@@ -145,6 +221,154 @@ app.get('/api/config/public', async (req, res, next) => {
   }
 });
 
+app.post('/api/customer/register', async (req, res, next) => {
+  try {
+    const { name, phone, password } = req.body || {};
+    const validationError = validateCustomerProfile({ name, phone, password });
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
+    }
+
+    const users = await readJSON('users.json', []);
+    const normalizedPhone = normalizePhone(phone);
+    const existingUser = users.find(user => normalizePhone(user.phone) === normalizedPhone);
+    if (existingUser) {
+      return res.status(409).json({ error: 'An account with this phone already exists' });
+    }
+
+    const customer = {
+      id: uuidv4(),
+      name: String(name).replace(/\s+/g, ' ').trim(),
+      phone: String(phone).trim(),
+      phoneNormalized: normalizedPhone,
+      passwordHash: hashPassword(password),
+      favorites: [],
+      createdAt: new Date().toISOString()
+    };
+    const token = crypto.randomBytes(24).toString('hex');
+    const sessions = await readJSON('customer-sessions.json', []);
+    const session = {
+      token,
+      userId: customer.id,
+      createdAt: new Date().toISOString()
+    };
+
+    users.unshift(customer);
+    sessions.unshift(session);
+    await writeJSON('users.json', users);
+    await writeJSON('customer-sessions.json', sessions);
+
+    res.json({
+      success: true,
+      token,
+      customer: sanitizeCustomer(customer)
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/customer/login', async (req, res, next) => {
+  try {
+    const { phone, password } = req.body || {};
+    const normalizedPhone = normalizePhone(phone);
+    const users = await readJSON('users.json', []);
+    const customer = users.find(user => normalizePhone(user.phone) === normalizedPhone);
+
+    if (!customer || customer.passwordHash !== hashPassword(password)) {
+      return res.status(401).json({ error: 'Wrong phone or password' });
+    }
+
+    const sessions = await readJSON('customer-sessions.json', []);
+    const token = crypto.randomBytes(24).toString('hex');
+    sessions.unshift({
+      token,
+      userId: customer.id,
+      createdAt: new Date().toISOString()
+    });
+    await writeJSON('customer-sessions.json', sessions);
+
+    res.json({
+      success: true,
+      token,
+      customer: sanitizeCustomer(customer)
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/customer/me', customerAuth, async (req, res, next) => {
+  try {
+    res.json({ customer: sanitizeCustomer(req.customer) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/customer/logout', customerAuth, async (req, res, next) => {
+  try {
+    const sessions = await readJSON('customer-sessions.json', []);
+    const nextSessions = sessions.filter(session => session.token !== req.customerToken);
+    await writeJSON('customer-sessions.json', nextSessions);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/customer/favorites', customerAuth, async (req, res, next) => {
+  try {
+    const products = await readJSON('products.json', []);
+    const favorites = (req.customer.favorites || [])
+      .map(productId => products.find(product => product.id === productId))
+      .filter(Boolean);
+    res.json(favorites);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/customer/favorites/:productId', customerAuth, async (req, res, next) => {
+  try {
+    const users = await readJSON('users.json', []);
+    const index = users.findIndex(user => user.id === req.customer.id);
+    if (index < 0) return res.status(404).json({ error: 'Customer not found' });
+
+    const nextFavorites = Array.from(new Set([...(users[index].favorites || []), req.params.productId]));
+    users[index] = { ...users[index], favorites: nextFavorites };
+    await writeJSON('users.json', users);
+    res.json({ success: true, favorites: nextFavorites });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/customer/favorites/:productId', customerAuth, async (req, res, next) => {
+  try {
+    const users = await readJSON('users.json', []);
+    const index = users.findIndex(user => user.id === req.customer.id);
+    if (index < 0) return res.status(404).json({ error: 'Customer not found' });
+
+    const nextFavorites = (users[index].favorites || []).filter(productId => productId !== req.params.productId);
+    users[index] = { ...users[index], favorites: nextFavorites };
+    await writeJSON('users.json', users);
+    res.json({ success: true, favorites: nextFavorites });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/customer/orders', customerAuth, async (req, res, next) => {
+  try {
+    const orders = await readJSON('orders.json', []);
+    const customerOrders = orders.filter(order => order.customerId === req.customer.id);
+    res.json(customerOrders);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post('/api/orders', async (req, res, next) => {
   try {
     const { name, phone, productId, productName, price, variantSelection, variantLabel, orderType, eventId } = req.body;
@@ -156,6 +380,8 @@ app.post('/api/orders', async (req, res, next) => {
       return res.status(400).json({ error: validationError });
     }
 
+    const token = req.headers['x-customer-token'];
+    const auth = await getCustomerSession(token);
     const orders = await readJSON('orders.json', []);
     const order = {
       id: uuidv4(),
@@ -167,6 +393,7 @@ app.post('/api/orders', async (req, res, next) => {
       variantSelection: variantSelection || {},
       variantLabel: variantLabel || '',
       orderType: orderType === 'consultation' ? 'consultation' : 'order',
+      customerId: auth?.user?.id || null,
       status: 'new',
       createdAt: new Date().toISOString()
     };
@@ -175,6 +402,106 @@ app.post('/api/orders', async (req, res, next) => {
     await writeJSON('orders.json', orders);
     sendMetaConversion({ req, order, eventId });
     res.json({ success: true, orderId: order.id });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/refund-requests', async (req, res, next) => {
+  try {
+    const {
+      name,
+      phone,
+      productName,
+      orderReference,
+      deliveryService,
+      requestType,
+      reason,
+      details
+    } = req.body;
+
+    if (!name || !phone || !productName || !reason || !details) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const validationError = validateOrderContact(name, phone);
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
+    }
+
+    const cleanDetails = String(details || '').trim();
+    if (cleanDetails.length < 10) {
+      return res.status(400).json({ error: 'Please provide more details about the refund request' });
+    }
+
+    const refundRequests = await readJSON('refund-requests.json', []);
+    const refundRequest = {
+      id: uuidv4(),
+      name: String(name).trim(),
+      phone: String(phone).trim(),
+      productName: String(productName).trim(),
+      orderReference: String(orderReference || '').trim(),
+      deliveryService: String(deliveryService || '').trim(),
+      requestType: String(requestType || 'refund').trim(),
+      reason: String(reason).trim(),
+      details: cleanDetails,
+      status: 'new',
+      createdAt: new Date().toISOString()
+    };
+
+    refundRequests.unshift(refundRequest);
+    await writeJSON('refund-requests.json', refundRequests);
+    res.json({ success: true, requestId: refundRequest.id });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/reviews', async (req, res, next) => {
+  try {
+    const { productId } = req.query;
+    const reviews = await readJSON('reviews.json', []);
+    const filtered = reviews.filter(review => {
+      if (review.status !== 'approved') return false;
+      if (productId && review.productId !== productId) return false;
+      return true;
+    });
+    res.json(filtered);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/reviews', async (req, res, next) => {
+  try {
+    const { productId, productName, name, phone, text, rating, image } = req.body;
+
+    if (!productId || !productName || !name || !phone || !text) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    const validationError = validateReviewInput({ name, phone, text, rating });
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
+    }
+
+    const reviews = await readJSON('reviews.json', []);
+    const review = {
+      id: uuidv4(),
+      productId,
+      productName: String(productName).trim(),
+      name: String(name).trim(),
+      phone: String(phone).trim(),
+      text: String(text).trim(),
+      rating: Number(rating),
+      image: String(image || '').trim(),
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    reviews.unshift(review);
+    await writeJSON('reviews.json', reviews);
+    res.json({ success: true, reviewId: review.id });
   } catch (error) {
     next(error);
   }
@@ -246,6 +573,70 @@ app.delete('/api/admin/products/:id', adminAuth, async (req, res, next) => {
 app.get('/api/admin/orders', adminAuth, async (req, res, next) => {
   try {
     res.json(await readJSON('orders.json', []));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/admin/refund-requests', adminAuth, async (req, res, next) => {
+  try {
+    res.json(await readJSON('refund-requests.json', []));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/admin/reviews', adminAuth, async (req, res, next) => {
+  try {
+    res.json(await readJSON('reviews.json', []));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put('/api/admin/reviews/:id', adminAuth, async (req, res, next) => {
+  try {
+    const reviews = await readJSON('reviews.json', []);
+    const index = reviews.findIndex(review => review.id === req.params.id);
+    if (index < 0) return res.status(404).json({ error: 'Not found' });
+    reviews[index] = { ...reviews[index], ...req.body };
+    await writeJSON('reviews.json', reviews);
+    res.json(reviews[index]);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/admin/reviews/:id', adminAuth, async (req, res, next) => {
+  try {
+    const reviews = await readJSON('reviews.json', []);
+    const nextReviews = reviews.filter(review => review.id !== req.params.id);
+    await writeJSON('reviews.json', nextReviews);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put('/api/admin/refund-requests/:id', adminAuth, async (req, res, next) => {
+  try {
+    const refundRequests = await readJSON('refund-requests.json', []);
+    const index = refundRequests.findIndex(request => request.id === req.params.id);
+    if (index < 0) return res.status(404).json({ error: 'Not found' });
+    refundRequests[index] = { ...refundRequests[index], ...req.body };
+    await writeJSON('refund-requests.json', refundRequests);
+    res.json(refundRequests[index]);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/admin/refund-requests/:id', adminAuth, async (req, res, next) => {
+  try {
+    const refundRequests = await readJSON('refund-requests.json', []);
+    const nextRefunds = refundRequests.filter(request => request.id !== req.params.id);
+    await writeJSON('refund-requests.json', nextRefunds);
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -346,11 +737,19 @@ app.get('/api/admin/stats', adminAuth, async (req, res, next) => {
 });
 
 app.get('/admin', (req, res) => res.sendFile(fileUrl('admin.html')));
+app.get('/account', (req, res) => res.sendFile(fileUrl('account.html')));
+app.get('/account.html', (req, res) => res.sendFile(fileUrl('account.html')));
 app.get('/product/:id', (req, res) => res.sendFile(fileUrl('product.html')));
 app.get('*', (req, res) => res.sendFile(fileUrl('index.html')));
 
 app.use((error, req, res, next) => {
   console.error('Server error:', error.message, error.stack);
+  if (error.type === 'entity.too.large') {
+    if (req.path.startsWith('/api/')) {
+      return res.status(413).json({ error: 'Uploaded data is too large. Please use a smaller image.' });
+    }
+    return res.status(413).send('Uploaded data is too large.');
+  }
   if (req.path.startsWith('/api/')) {
     return res.status(500).json({ error: 'Internal server error', detail: error.message });
   }

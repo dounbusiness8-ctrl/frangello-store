@@ -1,12 +1,15 @@
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let adminPassword = '';
 let allOrders = [];
+let allRefundRequests = [];
+let allReviews = [];
 let allProducts = [];
 let allCollections = [];
 let currentEditId = null;
 let currentConfig = {};
 let uploadedImageData = '';
 let currentVariantDraft = [];
+let currentStoryImages = [];
 
 // ─── LOGIN ───────────────────────────────────────────────────────────────────
 async function doLogin(e) {
@@ -39,7 +42,7 @@ function logout() {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function initAdmin() {
-  await Promise.all([loadStats(), loadOrders(), loadProducts(), loadCollections(), loadSettings()]);
+  await Promise.all([loadStats(), loadOrders(), loadRefundRequests(), loadReviews(), loadProducts(), loadCollections(), loadSettings()]);
 }
 
 function authHeaders() {
@@ -53,7 +56,7 @@ function switchTab(name) {
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelector(`[data-tab="${name}"]`).classList.add('active');
   document.getElementById('pageTitle').textContent =
-    { dashboard: 'Dashboard', products: 'Products', orders: 'Orders', collections: 'Collections', settings: 'Settings' }[name];
+    { dashboard: 'Dashboard', products: 'Products', orders: 'Orders', refunds: 'Refunds', reviews: 'Reviews', collections: 'Collections', settings: 'Settings' }[name];
   if (window.innerWidth <= 768) closeSidebar();
 }
 
@@ -96,6 +99,38 @@ async function loadOrders() {
   } catch {}
 }
 
+async function loadRefundRequests() {
+  try {
+    const res = await fetch('/api/admin/refund-requests', { headers: authHeaders() });
+    allRefundRequests = await res.json();
+    renderRefundRequests(allRefundRequests);
+    const newRefunds = allRefundRequests.filter(request => request.status === 'new').length;
+    const badge = document.getElementById('newRefundBadge');
+    if (newRefunds > 0) {
+      badge.textContent = newRefunds;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch {}
+}
+
+async function loadReviews() {
+  try {
+    const res = await fetch('/api/admin/reviews', { headers: authHeaders() });
+    allReviews = await res.json();
+    renderReviews(allReviews);
+    const pendingReviews = allReviews.filter(review => review.status === 'pending').length;
+    const badge = document.getElementById('pendingReviewBadge');
+    if (pendingReviews > 0) {
+      badge.textContent = pendingReviews;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch {}
+}
+
 function filterOrders() {
   const f = document.getElementById('orderFilter').value;
   const filtered = f === 'all' ? allOrders : allOrders.filter(o => o.status === f);
@@ -135,6 +170,110 @@ function renderOrders(orders) {
   }).join('');
 }
 
+function filterRefundRequests() {
+  const filter = document.getElementById('refundFilter').value;
+  const filtered = filter === 'all'
+    ? allRefundRequests
+    : allRefundRequests.filter(request => request.status === filter);
+  renderRefundRequests(filtered);
+}
+
+function renderRefundRequests(requests) {
+  const tbody = document.getElementById('refundsBody');
+  if (!tbody) return;
+
+  if (!requests.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#bbb">No refund requests found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = requests.map(request => {
+    const d = new Date(request.createdAt);
+    const dateStr = d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const requestLabel = [
+      request.requestType || 'refund',
+      request.reason,
+      request.orderReference ? `Order: ${request.orderReference}` : '',
+      request.deliveryService ? `Delivery: ${request.deliveryService}` : ''
+    ].filter(Boolean).join(' · ');
+
+    return `
+      <tr>
+        <td class="order-name">${esc(request.name)}</td>
+        <td class="order-phone">${esc(request.phone)}</td>
+        <td class="order-product" title="${esc(request.details)}">${esc(request.productName)}</td>
+        <td class="order-product" title="${esc(request.details)}">${esc(requestLabel)}</td>
+        <td class="order-date">${dateStr}</td>
+        <td><span class="status-badge status-${request.status}">${request.status}</span></td>
+        <td>
+          <div class="order-actions">
+            <select onchange="updateRefundStatus('${request.id}', this.value)" title="Change status">
+              <option value="">Change…</option>
+              <option value="new" ${request.status === 'new' ? 'selected' : ''}>New</option>
+              <option value="in_review" ${request.status === 'in_review' ? 'selected' : ''}>In Review</option>
+              <option value="resolved" ${request.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+              <option value="rejected" ${request.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+            </select>
+            <button class="btn-danger" onclick="deleteRefundRequest('${request.id}')">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterReviews() {
+  const filter = document.getElementById('reviewFilter').value;
+  const filtered = filter === 'all'
+    ? allReviews
+    : allReviews.filter(review => review.status === filter);
+  renderReviews(filtered);
+}
+
+function renderReviews(reviews) {
+  const tbody = document.getElementById('reviewsBody');
+  if (!tbody) return;
+
+  if (!reviews.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#bbb">No reviews found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = reviews.map(review => {
+    const d = new Date(review.createdAt);
+    const dateStr = d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const stars = '★'.repeat(Math.max(1, Math.min(5, Number(review.rating) || 0)));
+    const reviewText = review.image
+      ? `${stars} · ${review.text} · photo attached`
+      : `${stars} · ${review.text}`;
+
+    return `
+      <tr>
+        <td class="order-name">${esc(review.name)}</td>
+        <td class="order-phone">${esc(review.phone)}</td>
+        <td class="order-product">${esc(review.productName)}</td>
+        <td class="order-product" title="${esc(review.text)}">
+          ${esc(reviewText)}
+          ${review.image ? `<div style="margin-top:8px"><img src="${escAttr(review.image)}" alt="Review photo" style="width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid #e5e7eb" /></div>` : ''}
+        </td>
+        <td class="order-date">${dateStr}</td>
+        <td><span class="status-badge status-${review.status}">${review.status}</span></td>
+        <td>
+          <div class="order-actions">
+            <select onchange="updateReviewStatus('${review.id}', this.value)" title="Change status">
+              <option value="">Change…</option>
+              <option value="pending" ${review.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="approved" ${review.status === 'approved' ? 'selected' : ''}>Approved</option>
+              <option value="rejected" ${review.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+            </select>
+            <button class="btn-danger" onclick="deleteReview('${review.id}')">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
 async function updateOrderStatus(id, status) {
   if (!status) return;
   await fetch(`/api/admin/orders/${id}`, {
@@ -153,6 +292,42 @@ async function deleteOrder(id) {
   await loadOrders();
   await loadStats();
   showToast('Order deleted.', 'success');
+}
+
+async function updateRefundStatus(id, status) {
+  if (!status) return;
+  await fetch(`/api/admin/refund-requests/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ status })
+  });
+  await loadRefundRequests();
+  showToast('Refund request updated!', 'success');
+}
+
+async function deleteRefundRequest(id) {
+  if (!confirm('Delete this refund request?')) return;
+  await fetch(`/api/admin/refund-requests/${id}`, { method: 'DELETE', headers: authHeaders() });
+  await loadRefundRequests();
+  showToast('Refund request deleted.', 'success');
+}
+
+async function updateReviewStatus(id, status) {
+  if (!status) return;
+  await fetch(`/api/admin/reviews/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ status })
+  });
+  await loadReviews();
+  showToast('Review updated!', 'success');
+}
+
+async function deleteReview(id) {
+  if (!confirm('Delete this review?')) return;
+  await fetch(`/api/admin/reviews/${id}`, { method: 'DELETE', headers: authHeaders() });
+  await loadReviews();
+  showToast('Review deleted.', 'success');
 }
 
 function renderRecentOrders(orders) {
@@ -207,6 +382,7 @@ function renderAdminProducts(products) {
           <span class="visibility-badge ${p.visible ? 'visible-yes' : 'visible-no'}">${p.visible ? 'Visible' : 'Hidden'}</span>
           ${p.badge ? `<span class="visibility-badge" style="background:#fef3c7;color:#92400e">${p.badge}</span>` : ''}
           ${Array.isArray(p.variants) && p.variants.length ? `<span class="visibility-badge" style="background:#ede9fe;color:#6d28d9">${p.variants.length} variant${p.variants.length > 1 ? 's' : ''}</span>` : ''}
+          ${Array.isArray(p.storyBlocks) && p.storyBlocks.length ? `<span class="visibility-badge" style="background:#e0f2fe;color:#075985">${p.storyBlocks.length} LP block${p.storyBlocks.length > 1 ? 's' : ''}</span>` : ''}
         </div>
         <div class="admin-product-price">${(p.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'} ${p.oldPrice ? `<span style="font-size:12px;color:#bbb;font-weight:400;text-decoration:line-through">${p.oldPrice.toLocaleString()} ${currentConfig.currency || 'BYN'}</span>` : ''}</div>
         <div class="admin-product-actions">
@@ -227,7 +403,9 @@ function openProductModal(editId = null) {
   document.getElementById('imagePreviewWrap').style.display = 'none';
   uploadedImageData = '';
   currentVariantDraft = [];
+  currentStoryImages = [];
   renderVariantBuilder();
+  resetStoryEditor();
 
   // Populate collection dropdown
   const sel = document.getElementById('pCollection');
@@ -251,6 +429,7 @@ function openProductModal(editId = null) {
       showImagePreview(p.image);
     }
     currentVariantDraft = normalizeVariants(p.variants);
+    hydrateStoryEditor(p.storyBlocks);
     renderVariantBuilder();
   } else {
     document.getElementById('productModalTitle').textContent = 'Add Product';
@@ -291,6 +470,36 @@ document.getElementById('pImageFile').addEventListener('change', async function(
   }
 });
 
+document.getElementById('storyImageFiles').addEventListener('change', async function() {
+  const files = Array.from(this.files || []);
+  if (!files.length) return;
+
+  try {
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        showToast('Please choose image files only.', 'error');
+        continue;
+      }
+      const image = await readFileAsDataURL(file);
+      currentStoryImages.push(image);
+    }
+    this.value = '';
+    syncStoryImageUrlsField();
+    renderStoryImagesPreview();
+    showToast('Landing images added.', 'success');
+  } catch {
+    showToast('Could not read one of the landing images.', 'error');
+  }
+});
+
+document.getElementById('storyImageUrls').addEventListener('input', function() {
+  currentStoryImages = this.value
+    .split('\n')
+    .map(item => item.trim())
+    .filter(Boolean);
+  renderStoryImagesPreview();
+});
+
 function showImagePreview(url) {
   const wrap = document.getElementById('imagePreviewWrap');
   const img = document.getElementById('imagePreview');
@@ -312,26 +521,34 @@ async function saveProduct(e) {
     badge: document.getElementById('pBadge').value,
     visible: document.getElementById('pVisible').value === 'true',
     image: uploadedImageData || document.getElementById('pImage').value.trim(),
-    variants: collectVariantsFromBuilder()
+    variants: collectVariantsFromBuilder(),
+    storyBlocks: collectStoryBlocksFromEditor()
   };
 
   try {
+    const url = currentEditId ? `/api/admin/products/${currentEditId}` : '/api/admin/products';
+    const method = currentEditId ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: authHeaders(),
+      body: JSON.stringify(data)
+    });
+    const payload = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(payload.error || 'Error saving product.');
+    }
+
     if (currentEditId) {
-      await fetch(`/api/admin/products/${currentEditId}`, {
-        method: 'PUT', headers: authHeaders(), body: JSON.stringify(data)
-      });
       showToast('Product updated!', 'success');
     } else {
-      await fetch('/api/admin/products', {
-        method: 'POST', headers: authHeaders(), body: JSON.stringify(data)
-      });
       showToast('Product added!', 'success');
     }
     closeProductModal();
     await loadProducts();
     await loadStats();
-  } catch {
-    showToast('Error saving product.', 'error');
+  } catch (error) {
+    showToast(error.message || 'Error saving product.', 'error');
   } finally {
     btn.disabled = false;
   }
@@ -687,6 +904,99 @@ function normalizeVariants(variants) {
     name: variant.name || '',
     values: Array.isArray(variant.values) ? variant.values.join(', ') : ''
   }));
+}
+
+function resetStoryEditor() {
+  document.getElementById('storyContentText').value = '';
+  document.getElementById('storyImageUrls').value = '';
+  document.getElementById('storyImageFiles').value = '';
+  renderStoryImagesPreview();
+}
+
+function hydrateStoryEditor(blocks) {
+  const normalized = Array.isArray(blocks) ? blocks : [];
+  document.getElementById('storyContentText').value = normalized.map(block => {
+    const parts = [];
+    if (block.label) parts.push(`Label: ${block.label}`);
+    if (block.title) parts.push(`Title: ${block.title}`);
+    if (block.text) parts.push(`Text: ${block.text}`);
+    return parts.join('\n');
+  }).filter(Boolean).join('\n\n');
+
+  currentStoryImages = normalized.map(block => String(block.image || '').trim()).filter(Boolean);
+  syncStoryImageUrlsField();
+  renderStoryImagesPreview();
+}
+
+function syncStoryImageUrlsField() {
+  const field = document.getElementById('storyImageUrls');
+  field.value = currentStoryImages.join('\n');
+}
+
+function renderStoryImagesPreview() {
+  const wrap = document.getElementById('storyImagesPreview');
+  if (!wrap) return;
+  if (!currentStoryImages.length) {
+    wrap.innerHTML = '';
+    return;
+  }
+
+  wrap.innerHTML = currentStoryImages.map((image, index) => `
+    <div style="position:relative">
+      <img src="${escAttr(image)}" alt="Landing ${index + 1}" style="width:100%;height:96px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb" />
+      <button type="button" class="btn-danger" style="position:absolute;top:6px;right:6px;padding:4px 8px;font-size:11px" onclick="removeStoryImage(${index})">Remove</button>
+    </div>
+  `).join('');
+}
+
+function removeStoryImage(index) {
+  currentStoryImages.splice(index, 1);
+  syncStoryImageUrlsField();
+  renderStoryImagesPreview();
+}
+
+function collectStoryBlocksFromEditor() {
+  const raw = document.getElementById('storyContentText').value.trim();
+  if (!raw && !currentStoryImages.length) return [];
+
+  const sections = raw
+    .split(/\n\s*\n+/)
+    .map(section => section.trim())
+    .filter(Boolean)
+    .map((section, index) => {
+      const lines = section.split('\n').map(line => line.trim()).filter(Boolean);
+      let label = '';
+      let title = '';
+      const textParts = [];
+
+      for (const line of lines) {
+        if (/^label\s*:/i.test(line)) {
+          label = line.replace(/^label\s*:/i, '').trim();
+        } else if (/^title\s*:/i.test(line)) {
+          title = line.replace(/^title\s*:/i, '').trim();
+        } else if (/^text\s*:/i.test(line)) {
+          textParts.push(line.replace(/^text\s*:/i, '').trim());
+        } else {
+          textParts.push(line);
+        }
+      }
+
+      return {
+        label,
+        title,
+        text: textParts.join('\n').trim(),
+        image: currentStoryImages[index] || ''
+      };
+    });
+
+  const imageOnlyBlocks = currentStoryImages.slice(sections.length).map(image => ({
+    label: '',
+    title: '',
+    text: '',
+    image
+  }));
+
+  return [...sections, ...imageOnlyBlocks].filter(block => block.title || block.text || block.image);
 }
 
 function escAttr(str) {

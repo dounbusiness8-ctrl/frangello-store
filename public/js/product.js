@@ -3,6 +3,10 @@ let product = null;
 let storeConfig = {};
 let selectedVariants = {};
 let rewardWasClaimed = false;
+let approvedReviews = [];
+let cutoffIntervalId = null;
+let reviewImageData = '';
+let productIsFavorite = false;
 
 async function init() {
   // Get product ID from URL: /product/SOME-UUID
@@ -44,6 +48,36 @@ async function loadProduct(id) {
   }
 }
 
+const reviewImageInput = document.getElementById('plpReviewImageFile');
+if (reviewImageInput) {
+  reviewImageInput.addEventListener('change', async function() {
+    const file = this.files && this.files[0];
+    if (!file) {
+      reviewImageData = '';
+      toggleReviewImagePreview('');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      showToast('Выберите файл изображения для отзыва.');
+      this.value = '';
+      reviewImageData = '';
+      toggleReviewImagePreview('');
+      return;
+    }
+
+    try {
+      reviewImageData = await readFileAsDataURL(file);
+      toggleReviewImagePreview(reviewImageData);
+    } catch {
+      showToast('Не удалось прочитать это изображение.');
+      this.value = '';
+      reviewImageData = '';
+      toggleReviewImagePreview('');
+    }
+  });
+}
+
 function renderProduct(p) {
   const currency = storeConfig.currency || 'BYN';
   const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
@@ -79,6 +113,7 @@ function renderProduct(p) {
 
   // Title
   document.getElementById('plpTitle').textContent = p.name;
+  syncFavoriteButton();
 
   // Prices
   document.getElementById('plpPrice').textContent = p.price.toLocaleString() + ' ' + currency;
@@ -95,6 +130,10 @@ function renderProduct(p) {
   document.getElementById('stickyPrice').textContent = p.price.toLocaleString() + ' ' + currency;
 
   renderVariants(p.variants || []);
+  renderStoryBlocks(p);
+  loadApprovedReviews(p.id);
+  loadProductFavoriteState();
+  initCutoffTimer();
   trackProductView(p, currency);
 
   // Show main content
@@ -127,6 +166,40 @@ function renderVariants(variants) {
   }).join('');
 }
 
+function renderStoryBlocks(p) {
+  const wrap = document.getElementById('plpStoryStack');
+  const section = document.getElementById('plpStorySection');
+  if (!wrap) return;
+
+  const copy = Array.isArray(p.storyBlocks)
+    ? p.storyBlocks.filter(item => item && (item.title || item.text || item.image))
+    : [];
+
+  if (!copy.length) {
+    wrap.innerHTML = '';
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  if (section) section.style.display = '';
+  const safeName = escHtml(p.name || 'товар');
+
+  wrap.innerHTML = copy.map((item, index) => `
+    <article class="plp-story-card ${index % 2 === 1 ? 'reverse' : ''}">
+      <div class="plp-story-copy">
+        ${item.label ? `<span class="plp-story-label">${escHtml(item.label)}</span>` : ''}
+        ${item.title ? `<h3>${escHtml(item.title)}</h3>` : ''}
+        ${item.text ? `<p>${escHtml(item.text).replace(/\n/g, '<br />')}</p>` : ''}
+      </div>
+      <div class="plp-story-visual">
+        <div class="plp-story-visual-frame">
+          <img src="${escAttr(item.image || p.image || '')}" alt="${safeName}" loading="lazy" />
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
 function updateVariantSelection(name, value) {
   selectedVariants[name] = value;
 }
@@ -157,7 +230,7 @@ async function submitProductOrder(e) {
   btn.textContent = 'Оформляем заказ...';
 
   try {
-    const res = await fetch('/api/orders', {
+    const res = await (window.FrangelloCustomer ? window.FrangelloCustomer.fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -171,7 +244,21 @@ async function submitProductOrder(e) {
         eventId,
         trackingData
       })
-    });
+    }) : fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, phone,
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+        variantSelection: selectedVariants,
+        variantLabel: formatVariantLabel(selectedVariants),
+        orderType: 'order',
+        eventId,
+        trackingData
+      })
+    }));
     const data = await res.json();
     if (data.success) {
       if (window.metaTrack) {
@@ -222,7 +309,7 @@ async function submitConsultationRequest(e) {
   btn.textContent = 'Отправляем заявку...';
 
   try {
-    const res = await fetch('/api/orders', {
+    const res = await (window.FrangelloCustomer ? window.FrangelloCustomer.fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -237,7 +324,22 @@ async function submitConsultationRequest(e) {
         eventId,
         trackingData
       })
-    });
+    }) : fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+        variantSelection: selectedVariants,
+        variantLabel: formatVariantLabel(selectedVariants),
+        orderType: 'consultation',
+        eventId,
+        trackingData
+      })
+    }));
     const data = await res.json();
     if (data.success) {
       if (window.metaTrack) {
@@ -308,6 +410,108 @@ function validateLeadInputs(name, phone, consultation = false) {
   return { ok: true };
 }
 
+async function loadApprovedReviews(productId) {
+  try {
+    const res = await fetch(`/api/reviews?productId=${encodeURIComponent(productId)}`);
+    approvedReviews = await res.json();
+    renderApprovedReviews();
+  } catch {
+    approvedReviews = [];
+    renderApprovedReviews();
+  }
+}
+
+function renderApprovedReviews() {
+  const list = document.getElementById('plpReviewsList');
+  const averageEl = document.getElementById('plpReviewAverage');
+  const countEl = document.getElementById('plpReviewCount');
+  if (!list || !averageEl || !countEl) return;
+
+  if (!approvedReviews.length) {
+    averageEl.textContent = '—';
+    countEl.textContent = 'Пока нет отзывов';
+    list.innerHTML = '<div class="plp-review-empty">Пока нет опубликованных отзывов по этому товару.</div>';
+    return;
+  }
+
+  const average = approvedReviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / approvedReviews.length;
+  averageEl.textContent = average.toFixed(1);
+  countEl.textContent = `${approvedReviews.length} ${approvedReviews.length === 1 ? 'отзыв' : approvedReviews.length < 5 ? 'отзыва' : 'отзывов'}`;
+
+  list.innerHTML = approvedReviews.map(review => `
+    <article class="plp-review-card">
+      <div class="plp-review-top">
+        <div class="plp-review-name">${escHtml(review.name)}</div>
+        <div class="plp-review-stars">${'★'.repeat(Math.max(1, Math.min(5, Number(review.rating) || 0)))}</div>
+      </div>
+      <div class="plp-review-text">${escHtml(review.text)}</div>
+      ${review.image ? `<div class="plp-review-image"><img src="${escAttr(review.image)}" alt="Фото к отзыву ${escAttr(review.name)}" loading="lazy" /></div>` : ''}
+      <span class="plp-review-date">${formatReviewDate(review.createdAt)}</span>
+    </article>
+  `).join('');
+}
+
+async function submitProductReview(e) {
+  e.preventDefault();
+  if (!product) return;
+
+  const name = document.getElementById('plpReviewName').value.trim();
+  const phone = document.getElementById('plpReviewPhone').value.trim();
+  const rating = Number(document.getElementById('plpReviewRating').value);
+  const text = document.getElementById('plpReviewText').value.trim();
+  const validation = validateLeadInputs(name, phone, true);
+
+  if (!validation.ok) {
+    showToast(validation.message);
+    validation.field?.focus();
+    return;
+  }
+
+  if (text.length < 10) {
+    showToast('Напишите чуть более подробный отзыв, минимум 10 символов.');
+    document.getElementById('plpReviewText').focus();
+    return;
+  }
+
+  const btn = document.getElementById('plpReviewBtn');
+  btn.disabled = true;
+  btn.textContent = 'Отправляем отзыв...';
+
+  try {
+    const res = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: product.id,
+        productName: product.name,
+        name,
+        phone,
+        text,
+        rating,
+        image: reviewImageData
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Request failed');
+    }
+
+    document.getElementById('plpReviewName').value = '';
+    document.getElementById('plpReviewPhone').value = '';
+    document.getElementById('plpReviewRating').value = '5';
+    document.getElementById('plpReviewText').value = '';
+    document.getElementById('plpReviewImageFile').value = '';
+    reviewImageData = '';
+    toggleReviewImagePreview('');
+    showToast('Спасибо! Отзыв отправлен на модерацию.');
+  } catch (error) {
+    showToast(error.message || 'Не удалось отправить отзыв.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Отправить отзыв на модерацию';
+  }
+}
+
 function trackProductView(p, currency) {
   if (!window.metaTrack) return;
   window.metaTrack('ViewContent', {
@@ -336,6 +540,54 @@ function trackProductView(p, currency) {
       });
     }, { once: true });
   });
+}
+
+function syncFavoriteButton() {
+  const btn = document.getElementById('plpFavoriteBtn');
+  if (!btn || !product) return;
+  btn.textContent = productIsFavorite ? '❤ Уже в избранном' : '♡ Сохранить в избранное';
+  btn.classList.toggle('active', productIsFavorite);
+}
+
+async function loadProductFavoriteState() {
+  if (!product || !window.FrangelloCustomer || !window.FrangelloCustomer.getToken()) {
+    productIsFavorite = false;
+    syncFavoriteButton();
+    return;
+  }
+
+  try {
+    const res = await window.FrangelloCustomer.fetch('/api/customer/favorites');
+    const favorites = res.ok ? await res.json() : [];
+    productIsFavorite = favorites.some(item => item.id === product.id);
+  } catch {
+    productIsFavorite = false;
+  }
+
+  syncFavoriteButton();
+}
+
+async function toggleProductFavorite() {
+  if (!product) return;
+
+  if (!window.FrangelloCustomer || !window.FrangelloCustomer.getToken()) {
+    showToast('Войдите в кабинет, чтобы сохранить товар в избранное.');
+    setTimeout(() => { window.location.href = '/account.html'; }, 500);
+    return;
+  }
+
+  try {
+    const res = await window.FrangelloCustomer.fetch(`/api/customer/favorites/${product.id}`, {
+      method: productIsFavorite ? 'DELETE' : 'POST'
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Request failed');
+    productIsFavorite = (data.favorites || []).includes(product.id);
+    syncFavoriteButton();
+    showToast(productIsFavorite ? 'Товар сохранён в избранное.' : 'Товар убран из избранного.');
+  } catch (error) {
+    showToast(error.message || 'Не удалось изменить избранное.');
+  }
 }
 
 function scrollToForm() {
@@ -403,6 +655,42 @@ function resetRewardCard() {
   codeEl.textContent = 'FRANGELLO50';
 }
 
+function initCutoffTimer() {
+  const timerEl = document.getElementById('plpCutoffTimer');
+  const textEl = document.getElementById('plpCutoffText');
+  const statusEl = document.querySelector('.plp-cutoff-status');
+  if (!timerEl || !textEl || !statusEl) return;
+
+  if (cutoffIntervalId) {
+    clearInterval(cutoffIntervalId);
+  }
+
+  const updateTimer = () => {
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setHours(23, 59, 59, 999);
+
+    if (now >= cutoff) {
+      const tomorrowOffer = new Date(now);
+      tomorrowOffer.setDate(tomorrowOffer.getDate() + 1);
+      tomorrowOffer.setHours(23, 59, 59, 999);
+      const diff = tomorrowOffer - now;
+      timerEl.textContent = formatDuration(diff);
+      statusEl.textContent = 'Новое окно';
+      textEl.textContent = 'Текущая акция обновляется вместе с новым дневным окном. Оставьте заявку раньше, чтобы не упустить выгодную цену.';
+      return;
+    }
+
+    const diff = cutoff - now;
+    timerEl.textContent = formatDuration(diff);
+    statusEl.textContent = 'Акция дня';
+    textEl.textContent = 'Если оставить заявку сегодня, вы фиксируете текущую цену и размер скидки до подтверждения заказа.';
+  };
+
+  updateTimer();
+  cutoffIntervalId = setInterval(updateTimer, 1000);
+}
+
 // ─── STICKY BAR ───────────────────────────────────────────────────────────────
 function initStickyBar() {
   const bar = document.getElementById('stickyBar');
@@ -429,6 +717,48 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+function formatReviewDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function toggleReviewImagePreview(src) {
+  const wrap = document.getElementById('plpReviewImagePreviewWrap');
+  const img = document.getElementById('plpReviewImagePreview');
+  if (!wrap || !img) return;
+
+  if (!src) {
+    wrap.classList.add('hidden');
+    img.src = '';
+    return;
+  }
+
+  img.src = src;
+  wrap.classList.remove('hidden');
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function escAttr(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -438,3 +768,7 @@ function escJs(str) {
 }
 
 init();
+
+window.addEventListener('frangello:customer-updated', () => {
+  loadProductFavoriteState();
+});

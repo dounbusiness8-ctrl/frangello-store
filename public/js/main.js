@@ -5,13 +5,17 @@ let activeCollection = 'all';
 let config = {};
 let currentProduct = null;
 let activeReward = null;
+let favoriteIds = [];
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function init() {
   await Promise.all([loadConfig(), loadCollections()]);
   loadRewardBanner();
+  await loadFavoriteIds();
   await loadProducts();
   initHeader();
+  initRevealMotion();
+  requestAnimationFrame(() => document.body.classList.add('is-ready'));
 }
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
@@ -36,6 +40,28 @@ function initHeader() {
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 20);
   }, { passive: true });
+}
+
+function initRevealMotion() {
+  const elements = document.querySelectorAll('.reveal-up');
+  if (!elements.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.16,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  elements.forEach((element, index) => {
+    element.style.transitionDelay = `${Math.min(index * 60, 240)}ms`;
+    observer.observe(element);
+  });
 }
 
 // ─── COLLECTIONS ─────────────────────────────────────────────────────────────
@@ -109,8 +135,12 @@ function renderProducts(list) {
       ? `<div class="product-reward-note">🎁 Ваш бонус -50% активен</div>`
       : '';
     const ctaText = activeReward ? 'Открыть товар с бонусом' : 'Подробнее и заказать';
+    const favoriteActive = favoriteIds.includes(p.id);
     return `
     <div class="product-card ${activeReward ? 'reward-ready' : ''}" style="animation-delay:${i * 0.06}s">
+      <button type="button" class="product-favorite-btn ${favoriteActive ? 'active' : ''}" onclick="toggleFavoriteFromCard(event, '${p.id}')">
+        ${favoriteActive ? '❤ В избранном' : '♡ В избранное'}
+      </button>
       <a href="/product/${p.id}" class="product-img-wrap">
         <img src="${p.image || 'https://via.placeholder.com/400x400?text=Product'}"
              alt="${p.name}" loading="lazy"
@@ -135,6 +165,45 @@ function renderProducts(list) {
       </div>
     </div>`;
   }).join('');
+}
+
+async function loadFavoriteIds() {
+  if (!window.FrangelloCustomer || !window.FrangelloCustomer.getToken()) {
+    favoriteIds = [];
+    return;
+  }
+
+  try {
+    const res = await window.FrangelloCustomer.fetch('/api/customer/favorites');
+    favoriteIds = res.ok ? (await res.json()).map(product => product.id) : [];
+  } catch {
+    favoriteIds = [];
+  }
+}
+
+async function toggleFavoriteFromCard(event, productId) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (!window.FrangelloCustomer || !window.FrangelloCustomer.getToken()) {
+    showToast('Войдите в кабинет, чтобы сохранять товары в избранное.');
+    setTimeout(() => { window.location.href = '/account.html'; }, 500);
+    return;
+  }
+
+  const active = favoriteIds.includes(productId);
+  try {
+    const res = await window.FrangelloCustomer.fetch(`/api/customer/favorites/${productId}`, {
+      method: active ? 'DELETE' : 'POST'
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Request failed');
+    favoriteIds = data.favorites || [];
+    renderProducts(products);
+    showToast(active ? 'Товар убран из избранного.' : 'Товар сохранён в избранное.');
+  } catch (error) {
+    showToast(error.message || 'Не удалось изменить избранное.');
+  }
 }
 
 function loadRewardBanner() {
@@ -250,3 +319,8 @@ function trackAddToCart(p) {
 
 // ─── START ────────────────────────────────────────────────────────────────────
 init();
+
+window.addEventListener('frangello:customer-updated', async () => {
+  await loadFavoriteIds();
+  renderProducts(products);
+});

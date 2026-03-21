@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Запрос на возврат – Frangello By</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/refund.css" />
+</head>
+<body class="refund-page">
+  <header class="header scrolled">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="logo-icon">F</span>
+        <div>
+          <span class="logo-main">Frangello</span>
+          <span class="logo-by">By</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="/#products">Товары</a>
+        <a href="/#about">О нас</a>
+        <a href="/refund-request.html">Возврат</a>
+      </nav>
+      <div class="header-right">
+        <a class="viber-link" href="https://msngr.viber.com/contact/?number=%2B375445673738" target="_blank" rel="noopener noreferrer" title="Написать в Viber">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 5.54 2.15 10.01c0 2.82 1.73 5.32 4.35 6.76l-.89 4.06 4.26-2.33c.69.1 1.4.16 2.17.16 5.46 0 9.89-3.54 9.89-8.01C21.93 5.54 17.5 2 12.04 2zm4.69 11.37c-.2.56-1.14 1.03-1.79 1.11-.48.06-1.08.11-3.14-.77-2.63-1.12-4.33-3.88-4.46-4.06-.12-.18-1.06-1.41-1.06-2.69 0-1.28.67-1.9.91-2.16.24-.26.52-.32.69-.32h.5c.16 0 .38-.06.6.45.22.5.74 1.73.81 1.86.06.13.1.29.02.47-.08.18-.12.29-.24.45-.12.16-.25.35-.35.47-.12.14-.25.29-.11.57.14.28.61 1 1.31 1.62.9.8 1.67 1.06 1.91 1.18.24.12.38.1.52-.06.14-.16.58-.67.73-.9.16-.22.31-.18.52-.1.21.08 1.35.64 1.58.75.23.12.39.18.44.29.06.12.06.68-.14 1.24z"/></svg>
+          <span>Viber</span>
+        </a>
+        <span class="cod-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Оплата при получении
+        </span>
+        <a href="/" class="btn-back">← В магазин</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="refund-shell">
+    <div class="refund-container">
+      <section class="refund-info">
+        <span class="refund-kicker">Служба поддержки</span>
+        <h1>Запрос на возврат или решение по заказу</h1>
+        <p>Если с заказом возникла проблема, заполните форму ниже. Мы рассмотрим обращение, свяжемся с вами и подскажем следующий шаг по возврату, обмену или урегулированию ситуации.</p>
+
+        <div class="refund-points">
+          <div class="refund-point">
+            <strong>Быстрое рассмотрение</strong>
+            <span>Мы фиксируем обращение в системе и возвращаемся с ответом после проверки деталей.</span>
+          </div>
+          <div class="refund-point">
+            <strong>Удобный формат</strong>
+            <span>Можно указать номер заказа, товар и кратко описать ситуацию, чтобы мы быстрее начали разбор.</span>
+          </div>
+          <div class="refund-point">
+            <strong>Понятный процесс</strong>
+            <span>После отправки запроса вы получите подтверждение, а команда магазина обработает обращение вручную.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="refund-form-card">
+        <div class="refund-form-head">
+          <h2>Оставить запрос</h2>
+          <p>Укажите как можно больше точной информации, чтобы мы быстрее разобрались в обращении.</p>
+        </div>
+
+        <form id="refundForm" onsubmit="submitRefundRequest(event)">
+          <div class="refund-grid">
+            <div class="refund-group">
+              <label for="refundName">Имя *</label>
+              <input type="text" id="refundName" placeholder="Ваше полное имя" required minlength="3" autocomplete="name" />
+            </div>
+
+            <div class="refund-group">
+              <label for="refundPhone">Телефон *</label>
+              <input type="tel" id="refundPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" inputmode="tel" />
+            </div>
+
+            <div class="refund-group">
+              <label for="refundProduct">Товар *</label>
+              <input type="text" id="refundProduct" placeholder="Название товара" required />
+            </div>
+
+            <div class="refund-group">
+              <label for="refundOrderRef">Номер заказа</label>
+              <input type="text" id="refundOrderRef" placeholder="Если есть" />
+            </div>
+
+            <div class="refund-group">
+              <label for="refundType">Тип обращения</label>
+              <select id="refundType">
+                <option value="refund">Возврат средств</option>
+                <option value="exchange">Обмен товара</option>
+                <option value="damaged">Повреждение / дефект</option>
+                <option value="missing">Проблема с комплектностью</option>
+                <option value="delivery">Проблема с доставкой</option>
+              </select>
+            </div>
+
+            <div class="refund-group full">
+              <label for="refundReason">Причина обращения *</label>
+              <input type="text" id="refundReason" placeholder="Кратко: например, пришёл не тот товар или есть дефект" required />
+            </div>
+
+            <div class="refund-group full">
+              <label for="refundDetails">Подробности *</label>
+              <textarea id="refundDetails" placeholder="Опишите проблему подробнее: что произошло, когда получили заказ, что именно не так с товаром или доставкой." required></textarea>
+            </div>
+          </div>
+
+          <p class="refund-note">
+            Отправляя запрос, вы подтверждаете достоверность данных и соглашаетесь с <a href="/privacy.html">политикой конфиденциальности</a>, <a href="/offer.html">публичной офертой</a> и <a href="/returns.html">условиями доставки и возврата</a>.
+          </p>
+
+          <button type="submit" class="refund-submit" id="refundSubmitBtn">Отправить запрос на рассмотрение</button>
+        </form>
+
+        <div class="refund-success hidden" id="refundSuccess">
+          <h3>Запрос отправлен</h3>
+          <p>Спасибо, <strong id="refundSuccessName"></strong>. Мы зарегистрировали ваше обращение и свяжемся по номеру <strong id="refundSuccessPhone"></strong> после проверки данных.</p>
+          <a href="/">Вернуться в магазин</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">
+        <span class="logo-icon sm">F</span>
+        <span class="logo-main" style="color:#fff">Frangello By</span>
+      </div>
+      <p class="footer-text">Поддержка покупателей · Беларусь</p>
+      <div class="footer-legal-links">
+        <a href="/privacy.html">Политика конфиденциальности</a>
+        <a href="/offer.html">Публичная оферта</a>
+        <a href="/terms.html">Условия использования</a>
+        <a href="/returns.html">Доставка и возврат</a>
+        <a href="/refund-request.html">Запрос на возврат</a>
+      </div>
+      <p class="footer-copy">© 2024 Frangello By. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <a class="viber-float" href="https://msngr.viber.com/contact/?number=%2B375445673738" target="_blank" rel="noopener noreferrer" title="Написать в Viber">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 5.54 2.15 10.01c0 2.82 1.73 5.32 4.35 6.76l-.89 4.06 4.26-2.33c.69.1 1.4.16 2.17.16 5.46 0 9.89-3.54 9.89-8.01C21.93 5.54 17.5 2 12.04 2zm4.69 11.37c-.2.56-1.14 1.03-1.79 1.11-.48.06-1.08.11-3.14-.77-2.63-1.12-4.33-3.88-4.46-4.06-.12-.18-1.06-1.41-1.06-2.69 0-1.28.67-1.9.91-2.16.24-.26.52-.32.69-.32h.5c.16 0 .38-.06.6.45.22.5.74 1.73.81 1.86.06.13.1.29.02.47-.08.18-.12.29-.24.45-.12.16-.25.35-.35.47-.12.14-.25.29-.11.57.14.28.61 1 1.31 1.62.9.8 1.67 1.06 1.91 1.18.24.12.38.1.52-.06.14-.16.58-.67.73-.9.16-.22.31-.18.52-.1.21.08 1.35.64 1.58.75.23.12.39.18.44.29.06.12.06.68-.14 1.24z"/></svg>
+  </a>
+  <script src="/js/refund-request.js"></script>
+</body>
+</html>
