@@ -12,18 +12,5 @@
     "customerId": null,
     "status": "new",
     "createdAt": "2026-03-21T07:32:36.385Z"
-  },
-  {
-    "id": "7414ead1-7c27-4fe8-84a6-8c2fafd26a3f",
-    "name": "ygg yyig",
-    "phone": "3752312321312",
-    "productId": "20ec6761-2373-4c9f-8531-a3d465cb541a",
-    "productName": "Мини-проектор HD",
-    "price": 179,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "consultation",
-    "status": "new",
-    "createdAt": "2026-03-20T21:00:49.686Z"
   }
 ]
