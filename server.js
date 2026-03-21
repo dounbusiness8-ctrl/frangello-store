@@ -529,6 +529,9 @@ app.get('/api/admin/products', adminAuth, async (req, res, next) => {
 
 app.post('/api/admin/products', adminAuth, async (req, res, next) => {
   try {
+    if (req.body.image && String(req.body.image).startsWith('data:')) {
+      return res.status(400).json({ error: 'Image must be a URL. Upload your image to imgur.com or another host and paste the link.' });
+    }
     const products = await readJSON('products.json', []);
     const product = {
       id: uuidv4(),
@@ -547,6 +550,9 @@ app.post('/api/admin/products', adminAuth, async (req, res, next) => {
 
 app.put('/api/admin/products/:id', adminAuth, async (req, res, next) => {
   try {
+    if (req.body.image && String(req.body.image).startsWith('data:')) {
+      return res.status(400).json({ error: 'Image must be a URL. Upload your image to imgur.com or another host and paste the link.' });
+    }
     const products = await readJSON('products.json', []);
     const index = products.findIndex(product => product.id === req.params.id);
     if (index === -1) return res.status(404).json({ error: 'Not found' });

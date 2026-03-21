@@ -26,7 +26,8 @@ async function githubApiGet(repoPath) {
       'User-Agent': 'frangello-store'
     }
   });
-  if (!res.ok) return null;
+  if (res.status === 404) return null; // file truly doesn't exist
+  if (!res.ok) throw new Error(`GitHub read error: ${res.status}`); // real error — don't treat as missing
   const data = await res.json();
   if (!data.content) return null;
   return { content: Buffer.from(data.content, 'base64').toString('utf8'), sha: data.sha };
@@ -130,160 +131,70 @@ async function readConfig() {
   return { ...fallback, ...stored };
 }
 
-async function initSampleData() {
+// Safe init: only writes if file is confirmed missing (404). Errors = skip, never overwrite.
+async function safeInit(name, defaultData) {
   try {
-    const collections = await readRaw('collections.json');
-    if (!collections) {
-      await writeJSON('collections.json', [
-        { id: '1', name: 'Все товары', slug: 'all', icon: '✨' },
-        { id: '2', name: 'Кухня', slug: 'kitchen', icon: '🍳' },
-        { id: '3', name: 'Гаджеты', slug: 'gadgets', icon: '⚡' },
-        { id: '4', name: 'Дом', slug: 'home', icon: '🏠' },
-        { id: '5', name: 'Стиль жизни', slug: 'lifestyle', icon: '💫' }
-      ]);
-    }
-
-    const products = await readRaw('products.json');
-    if (!products) {
-      const { v4: uuidv4 } = require('uuid');
-      await writeJSON('products.json', [
-        {
-          id: uuidv4(),
-          name: 'Мультифункциональная аэрофритюрница Pro',
-          description: 'Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.',
-          price: 149,
-          oldPrice: 219,
-          image: 'https://images.pexels.com/photos/4116714/pexels-photo-4116714.jpeg?auto=compress&w=500',
-          collection: 'kitchen',
-          badge: 'HOT',
-          visible: true,
-          featured: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Умная LED лампа для рабочего стола',
-          description: 'USB зарядка, 3 режима цвета, сенсорное управление, гибкая ножка.',
-          price: 58,
-          oldPrice: 85,
-          image: 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&w=500',
-          collection: 'gadgets',
-          badge: 'NEW',
-          visible: true,
-          featured: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Электрическая точилка для ножей',
-          description: 'Профессиональная заточка в 3 этапа, работает со всеми типами ножей.',
-          price: 72,
-          oldPrice: 98,
-          image: 'https://images.pexels.com/photos/4397899/pexels-photo-4397899.jpeg?auto=compress&w=500',
-          collection: 'kitchen',
-          badge: 'SALE',
-          visible: true,
-          featured: false,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Беспроводные наушники Pro X',
-          description: 'Активное шумоподавление, 36 часов работы, защита IPX5 от воды.',
-          price: 105,
-          oldPrice: 159,
-          image: 'https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&w=500',
-          collection: 'gadgets',
-          badge: 'HOT',
-          visible: true,
-          featured: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Портативный блендер-бутылка',
-          description: 'USB зарядка, 6 лезвий, смешивает за 30 секунд — бери с собой.',
-          price: 48,
-          oldPrice: 72,
-          image: 'https://images.pexels.com/photos/775996/pexels-photo-775996.jpeg?auto=compress&w=500',
-          collection: 'kitchen',
-          badge: 'NEW',
-          visible: true,
-          featured: false,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Смарт-часы с фитнес трекером',
-          description: 'Пульс, SpO2, мониторинг сна, 7 дней работы, водонепроницаемые.',
-          price: 92,
-          oldPrice: 135,
-          image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&w=500',
-          collection: 'gadgets',
-          badge: 'HOT',
-          visible: true,
-          featured: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Силиконовый набор для кухни (7 предметов)',
-          description: 'Термостойкость до 230°C, антипригарное, пищевой силикон, можно в посудомойку.',
-          price: 39,
-          oldPrice: 59,
-          image: 'https://images.pexels.com/photos/4397844/pexels-photo-4397844.jpeg?auto=compress&w=500',
-          collection: 'kitchen',
-          badge: 'SALE',
-          visible: true,
-          featured: false,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: uuidv4(),
-          name: 'Мини-проектор HD',
-          description: 'Поддержка 1080p, встроенный динамик, HDMI/USB, кино у вас дома.',
-          price: 179,
-          oldPrice: 259,
-          image: 'https://images.pexels.com/photos/7991168/pexels-photo-7991168.jpeg?auto=compress&w=500',
-          collection: 'gadgets',
-          badge: 'NEW',
-          visible: true,
-          featured: true,
-          createdAt: new Date().toISOString()
-        }
-      ]);
-    }
-
-    const orders = await readRaw('orders.json');
-    if (!orders) await writeJSON('orders.json', []);
-
-    const refundRequests = await readRaw('refund-requests.json');
-    if (!refundRequests) await writeJSON('refund-requests.json', []);
-
-    const reviews = await readRaw('reviews.json');
-    if (!reviews) await writeJSON('reviews.json', []);
-
-    const users = await readRaw('users.json');
-    if (!users) await writeJSON('users.json', []);
-
-    const customerSessions = await readRaw('customer-sessions.json');
-    if (!customerSessions) await writeJSON('customer-sessions.json', []);
-
-    const config = await readRaw('config.json');
-    if (!config) {
-      await writeJSON('config.json', {
-        adminPassword: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD,
-        storeName: 'Frangello By',
-        tagline: 'Гаджеты и товары для кухни — с доставкой по Беларуси',
-        whatsapp: '',
-        currency: 'BYN',
-        heroTitle: 'Товары, которые хочется заказать сразу',
-        heroSubtitle: 'Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении'
-      });
+    const existing = await readRaw(name); // throws on GitHub errors, null on 404
+    if (existing === null) {
+      await writeJSON(name, defaultData);
     }
   } catch (err) {
-    console.error('initSampleData error:', err);
+    console.error(`initSampleData: skipping ${name} due to read error:`, err.message);
   }
+}
+
+async function initSampleData() {
+  const { v4: uuidv4 } = require('uuid');
+
+  await safeInit('collections.json', [
+    { id: '1', name: 'Все товары', slug: 'all', icon: '✨' },
+    { id: '2', name: 'Кухня', slug: 'kitchen', icon: '🍳' },
+    { id: '3', name: 'Гаджеты', slug: 'gadgets', icon: '⚡' },
+    { id: '4', name: 'Дом', slug: 'home', icon: '🏠' },
+    { id: '5', name: 'Стиль жизни', slug: 'lifestyle', icon: '💫' }
+  ]);
+
+  await safeInit('products.json', [
+    {
+      id: uuidv4(),
+      name: 'Мультифункциональная аэрофритюрница Pro',
+      description: 'Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.',
+      price: 149, oldPrice: 219,
+      image: 'https://images.pexels.com/photos/4116714/pexels-photo-4116714.jpeg?auto=compress&w=500',
+      collection: 'kitchen', badge: 'HOT', visible: true, featured: true, createdAt: new Date().toISOString()
+    },
+    {
+      id: uuidv4(),
+      name: 'Умная LED лампа для рабочего стола',
+      description: 'USB зарядка, 3 режима цвета, сенсорное управление, гибкая ножка.',
+      price: 58, oldPrice: 85,
+      image: 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&w=500',
+      collection: 'gadgets', badge: 'NEW', visible: true, featured: true, createdAt: new Date().toISOString()
+    },
+    {
+      id: uuidv4(),
+      name: 'Беспроводные наушники Pro X',
+      description: 'Активное шумоподавление, 36 часов работы, защита IPX5 от воды.',
+      price: 105, oldPrice: 159,
+      image: 'https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&w=500',
+      collection: 'gadgets', badge: 'HOT', visible: true, featured: true, createdAt: new Date().toISOString()
+    }
+  ]);
+
+  await safeInit('orders.json', []);
+  await safeInit('refund-requests.json', []);
+  await safeInit('reviews.json', []);
+  await safeInit('users.json', []);
+  await safeInit('customer-sessions.json', []);
+  await safeInit('config.json', {
+    adminPassword: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD,
+    storeName: 'Frangello By',
+    tagline: 'Гаджеты и товары для кухни — с доставкой по Беларуси',
+    whatsapp: '',
+    currency: 'BYN',
+    heroTitle: 'Товары, которые хочется заказать сразу',
+    heroSubtitle: 'Гаджеты и товары для кухни с доставкой по Беларуси и оплатой только при получении'
+  });
 }
 
 module.exports = {

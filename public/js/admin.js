@@ -451,23 +451,8 @@ document.getElementById('pImage').addEventListener('input', function() {
 });
 
 document.getElementById('pImageFile').addEventListener('change', async function() {
-  const file = this.files && this.files[0];
-  if (!file) return;
-
-  if (!file.type.startsWith('image/')) {
-    showToast('Please choose an image file.', 'error');
-    this.value = '';
-    return;
-  }
-
-  try {
-    uploadedImageData = await readFileAsDataURL(file);
-    document.getElementById('pImage').value = '';
-    showImagePreview(uploadedImageData);
-    showToast('Image uploaded successfully.', 'success');
-  } catch {
-    showToast('Could not read this image file.', 'error');
-  }
+  this.value = '';
+  showToast('File upload not supported. Upload your image to imgur.com and paste the URL in the Image URL field.', 'error');
 });
 
 document.getElementById('storyImageFiles').addEventListener('change', async function() {
