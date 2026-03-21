@@ -1,18 +1,5 @@
 [
   {
-    "id": "a2e99224-004a-4e33-8aa9-2633758a4892",
-    "name": "azezae",
-    "description": "dazdaz",
-    "price": 22,
-    "oldPrice": 211,
-    "collection": "kitchen",
-    "badge": "HOT",
-    "visible": true,
-    "image": "",
-    "variants": [],
-    "createdAt": "2026-03-20T17:37:43.739Z"
-  },
-  {
     "id": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
     "name": "Мультифункциональная аэрофритюрница Pro",
     "description": "Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.",
