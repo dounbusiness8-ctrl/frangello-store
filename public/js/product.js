@@ -302,7 +302,7 @@ async function submitProductOrder(e) {
       document.getElementById('plpOrderForm').classList.add('hidden');
       document.getElementById('plpSuccess').classList.remove('hidden');
       document.getElementById('stickyBar').classList.remove('visible');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('plpSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
       showToast(data.detail || data.error || 'Что-то пошло не так. Попробуйте ещё раз.');
     }
@@ -385,7 +385,7 @@ async function submitConsultationRequest(e) {
       document.querySelector('#plpSuccess p').innerHTML = 'Спасибо, <strong id="plpSuccessName"></strong>! Мы свяжемся с вами по номеру <strong id="plpSuccessPhone"></strong> и поможем выбрать подходящий вариант.';
       document.getElementById('plpSuccessName').textContent = name;
       document.getElementById('plpSuccessPhone').textContent = phone;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('plpSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
       showToast('Что-то пошло не так. Попробуйте ещё раз.');
     }

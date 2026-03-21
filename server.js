@@ -406,6 +406,23 @@ app.post('/api/orders', async (req, res, next) => {
     orders.unshift(order);
     await writeJSON('orders.json', orders);
     sendMetaConversion({ req, order, eventId });
+
+    // Telegram notification
+    try {
+      const tgToken = process.env.TELEGRAM_BOT_TOKEN || '8734264069:AAEqdImV5nIdbmOzLi7tXHXaAHHyFpscUSU';
+      const tgChatId = process.env.TELEGRAM_CHAT_ID;
+      if (tgChatId) {
+        const typeLabel = order.orderType === 'consultation' ? '📋 Консультация' : '🛒 Заказ';
+        const variantLine = order.variantLabel ? `\n🎨 Вариант: ${order.variantLabel}` : '';
+        const msg = `${typeLabel} #${orders.length}\n\n👤 Имя: ${order.name}\n📞 Телефон: ${order.phone}\n📦 Товар: ${order.productName}${variantLine}\n💰 Цена: ${order.price} BYN\n⏱ ${new Date(order.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })}`;
+        fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: tgChatId, text: msg, parse_mode: 'HTML' })
+        }).catch(() => {});
+      }
+    } catch (_) {}
+
     res.json({ success: true, orderId: order.id });
   } catch (error) {
     next(error);
