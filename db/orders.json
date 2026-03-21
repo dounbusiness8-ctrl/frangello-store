@@ -77,18 +77,5 @@
     "orderType": "order",
     "status": "new",
     "createdAt": "2026-03-20T17:14:47.053Z"
-  },
-  {
-    "id": "d3087eb1-f3c0-453b-99c2-73b871d7c388",
-    "name": "Фарес Тест",
-    "phone": "+375291234567",
-    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
-    "productName": "Тест",
-    "price": 149,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "status": "new",
-    "createdAt": "2026-03-20T17:10:50.609Z"
   }
 ]
