@@ -238,6 +238,34 @@
         </section>
       </div>
 
+      <!-- LIVE MAP -->
+      <div class="section-card live-map-card">
+        <div class="section-card-header">
+          <div>
+            <h3>Live на сайте &nbsp;<span class="live-pulse-dot"></span> <span class="live-viewer-count" id="liveViewerCount">0</span></h3>
+            <p class="section-card-sub">Клиенты на карте Беларуси в реальном времени</p>
+          </div>
+          <div class="live-legend">
+            <span><svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="#3b82f6"/></svg> Смотрит</span>
+            <span><svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="#22c55e"/></svg> Купил</span>
+          </div>
+        </div>
+        <div class="live-map-wrap">
+          <svg id="belarusMap" viewBox="0 0 500 420" class="belarus-map-svg" xmlns="http://www.w3.org/2000/svg">
+            <path class="belarus-outline" d="M10,140 L27,128 L57,112 L113,108 L151,39 L230,18 L286,30 L381,66 L402,123 L445,164 L481,185 L486,234 L474,315 L440,344 L361,381 L282,381 L232,389 L177,401 L113,385 L50,356 L12,312 L12,211 Z"/>
+            <text class="oblast-label" x="38" y="224">Гродно</text>
+            <text class="oblast-label" x="58" y="310">Брест</text>
+            <text class="oblast-label" x="340" y="95">Витебск</text>
+            <text class="oblast-label" x="350" y="215">Могилёв</text>
+            <text class="oblast-label" x="370" y="320">Гомель</text>
+            <text class="oblast-label" x="185" y="200">Минск</text>
+            <g id="visitorDots"></g>
+          </svg>
+          <div class="live-map-empty" id="liveMapEmpty">Нет активных посетителей</div>
+        </div>
+        <div class="live-visitors-list" id="liveVisitorsList"></div>
+      </div>
+
       <div class="section-card">
         <div class="section-card-header">
           <h3>Recent Orders</h3>

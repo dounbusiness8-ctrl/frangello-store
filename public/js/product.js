@@ -1,3 +1,20 @@
+// ─── VISITOR TRACKING ────────────────────────────────────────────────────────
+(function initTracking() {
+  let sessionId = sessionStorage.getItem('_vsid');
+  if (!sessionId) { sessionId = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('_vsid', sessionId); }
+
+  function sendView(productId, productName) {
+    fetch('/api/track/view', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId, productId, productName }) }).catch(() => {});
+  }
+  function sendLeave() {
+    navigator.sendBeacon('/api/track/leave', JSON.stringify({ sessionId }));
+  }
+
+  window.__trackView = sendView;
+  window.addEventListener('pagehide', sendLeave);
+  setInterval(() => fetch('/api/track/ping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) }).catch(() => {}), 30000);
+})();
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 let product = null;
 let storeConfig = {};
@@ -43,6 +60,7 @@ async function loadProduct(id) {
       return;
     }
     renderProduct(product);
+    if (window.__trackView) window.__trackView(product.id, product.name);
   } catch {
     showNotFound();
   }

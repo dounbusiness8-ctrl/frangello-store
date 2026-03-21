@@ -25,6 +25,27 @@ const FB_ACCESS_TOKEN = process.env.FB_ACCESS_TOKEN || 'EAAJHIziUZCH4BQ1WTF8L2za
 
 app.disable('x-powered-by');
 app.use(express.json({ limit: '25mb' }));
+
+// ── Live SSE & visitor tracking ───────────────────────────────────────────────
+const sseClients = new Set();
+const visitors   = new Map(); // sessionId → visitor object
+
+function broadcastSSE(type, data) {
+  const payload = `data: ${JSON.stringify({ type, data })}\n\n`;
+  for (const client of sseClients) {
+    try { client.write(payload); } catch (_) { sseClients.delete(client); }
+  }
+}
+
+// Clean up visitors that haven't pinged in 2 min
+setInterval(() => {
+  const now = Date.now();
+  let changed = false;
+  for (const [id, v] of visitors) {
+    if (now - v.lastSeen > 120000) { visitors.delete(id); changed = true; }
+  }
+  if (changed) broadcastSSE('visitor-update', [...visitors.values()]);
+}, 30000);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
@@ -406,6 +427,13 @@ app.post('/api/orders', async (req, res, next) => {
     orders.unshift(order);
     await writeJSON('orders.json', orders);
     sendMetaConversion({ req, order, eventId });
+
+    // Broadcast to live admin dashboard
+    broadcastSSE('new-order', order);
+    for (const [, v] of visitors) {
+      if (v.productId === productId) { v.status = 'bought'; v.lastSeen = Date.now(); }
+    }
+    broadcastSSE('visitor-update', [...visitors.values()]);
 
     // Telegram notification (awaited so serverless doesn't cut it off)
     try {
@@ -875,6 +903,53 @@ app.post('/api/admin/suggest-collection', adminAuth, async (req, res) => {
   const collections = await readJSON('collections.json', []);
   const match = collections.find(c => c.slug === best.id || c.id === best.id);
   res.json({ collection: match ? match.id : null, slug: best.id, confidence: Math.min(best.score / 3, 1) });
+});
+
+// ── SSE admin live feed ───────────────────────────────────────────────────────
+app.get('/api/admin/events', adminAuth, (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no'
+  });
+  const ping = () => res.write(': ping\n\n');
+  const interval = setInterval(ping, 25000);
+  res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
+  res.write(`data: ${JSON.stringify({ type: 'visitor-update', data: [...visitors.values()] })}\n\n`);
+  sseClients.add(res);
+  req.on('close', () => { sseClients.delete(res); clearInterval(interval); });
+});
+
+// ── Visitor tracking (public, no auth) ───────────────────────────────────────
+app.post('/api/track/view', async (req, res) => {
+  const { sessionId, productId, productName } = req.body;
+  if (!sessionId) return res.json({ ok: true });
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || '';
+  const isLocal = !ip || ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(ip) || ip.startsWith('192.168') || ip.startsWith('10.');
+  let city = 'Беларусь', lat = 53.9, lon = 27.56;
+  if (!isLocal) {
+    try {
+      const geo = await fetch(`http://ip-api.com/json/${ip}?fields=city,lat,lon&lang=ru`, { signal: AbortSignal.timeout(2000) });
+      const g = await geo.json();
+      if (g.city) { city = g.city; lat = g.lat; lon = g.lon; }
+    } catch (_) {}
+  }
+  visitors.set(sessionId, { sessionId, productId, productName, city, lat, lon, lastSeen: Date.now(), status: 'viewing' });
+  broadcastSSE('visitor-update', [...visitors.values()]);
+  res.json({ ok: true });
+});
+
+app.post('/api/track/ping', (req, res) => {
+  const v = visitors.get(req.body?.sessionId);
+  if (v) v.lastSeen = Date.now();
+  res.json({ ok: true });
+});
+
+app.post('/api/track/leave', (req, res) => {
+  visitors.delete(req.body?.sessionId);
+  broadcastSSE('visitor-update', [...visitors.values()]);
+  res.json({ ok: true });
 });
 
 app.get('*', (req, res) => res.sendFile(fileUrl('index.html')));

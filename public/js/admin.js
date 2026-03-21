@@ -43,6 +43,97 @@ function logout() {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function initAdmin() {
   await Promise.all([loadStats(), loadOrders(), loadRefundRequests(), loadReviews(), loadProducts(), loadCollections(), loadSettings()]);
+  connectSSE();
+}
+
+// ─── LIVE SSE ─────────────────────────────────────────────────────────────────
+let sseSource = null;
+function connectSSE() {
+  if (sseSource) sseSource.close();
+  sseSource = new EventSource(`/api/admin/events?adminPassword=${encodeURIComponent(adminPassword)}`);
+  sseSource.onmessage = (e) => {
+    try {
+      const { type, data } = JSON.parse(e.data);
+      if (type === 'new-order') onLiveOrder(data);
+      if (type === 'visitor-update') onVisitorUpdate(data);
+    } catch (_) {}
+  };
+  sseSource.onerror = () => { sseSource.close(); setTimeout(connectSSE, 5000); };
+}
+
+function onLiveOrder(order) {
+  // Prepend to in-memory list
+  allOrders = [order, ...allOrders.filter(o => o.id !== order.id)];
+  // Prepend flash row to table
+  const tbody = document.getElementById('ordersBody');
+  if (tbody) {
+    const tr = document.createElement('tr');
+    tr.className = 'order-new-flash';
+    const d = new Date(order.createdAt);
+    const dateStr = d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    tr.innerHTML = `
+      <td class="order-name">${esc(order.name)}${order.orderType === 'consultation' ? ' <span class="visibility-badge" style="background:#e0f2fe;color:#075985;margin-left:6px">Consultation</span>' : ''}</td>
+      <td class="order-phone">${esc(order.phone)}</td>
+      <td class="order-product">${esc(order.productName || '—')}</td>
+      <td class="order-price">${(order.price || 0).toLocaleString()} BYN</td>
+      <td class="order-date">${dateStr}</td>
+      <td><span class="status-badge status-new">new</span></td>
+      <td><div class="order-actions">
+        <select onchange="updateOrderStatus('${order.id}', this.value)"><option value="">Change…</option><option value="new" selected>New</option><option value="confirmed">Confirmed</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select>
+        <button class="btn-danger" onclick="deleteOrder('${order.id}')">Delete</button>
+      </div></td>`;
+    tbody.insertBefore(tr, tbody.firstChild);
+  }
+  // Update stats
+  renderAnalytics();
+  renderRecentOrders(allOrders.slice(0, 5));
+  // Toast notification
+  showToast(`🛒 Новый заказ: ${order.name} — ${order.productName}`);
+}
+
+// Belarus map coordinate transform (SVG viewBox 0 0 500 420)
+function latLonToSVG(lat, lon) {
+  const x = Math.round((lon - 23.17) / 9.6 * 480 + 10);
+  const y = Math.round((56.17 - lat) / 4.91 * 400 + 10);
+  return { x: Math.max(15, Math.min(485, x)), y: Math.max(15, Math.min(405, y)) };
+}
+
+function onVisitorUpdate(visitors) {
+  const count = visitors.length;
+  const countEl = document.getElementById('liveViewerCount');
+  if (countEl) countEl.textContent = count;
+
+  const dotsG = document.getElementById('visitorDots');
+  const emptyEl = document.getElementById('liveMapEmpty');
+  const listEl = document.getElementById('liveVisitorsList');
+  if (!dotsG) return;
+
+  if (count === 0) {
+    dotsG.innerHTML = '';
+    if (emptyEl) emptyEl.classList.remove('hidden');
+    if (listEl) listEl.innerHTML = '';
+    return;
+  }
+  if (emptyEl) emptyEl.classList.add('hidden');
+
+  dotsG.innerHTML = visitors.map(v => {
+    const { x, y } = latLonToSVG(v.lat, v.lon);
+    const color = v.status === 'bought' ? '#22c55e' : '#3b82f6';
+    const cls = v.status === 'bought' ? 'visitor-dot bought' : 'visitor-dot';
+    return `<g class="${cls}" title="${v.city}">
+      <circle cx="${x}" cy="${y}" r="8" fill="${color}" opacity="0.85"/>
+      <circle cx="${x}" cy="${y}" r="14" fill="${color}" opacity="0.2"/>
+    </g>`;
+  }).join('');
+
+  if (listEl) {
+    listEl.innerHTML = visitors.map(v => {
+      const icon = v.status === 'bought'
+        ? `<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="#22c55e"/></svg>`
+        : `<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="#3b82f6"/></svg>`;
+      return `<div class="live-visitor-chip ${v.status === 'bought' ? 'bought' : ''}">${icon} ${esc(v.city)} · ${esc(v.productName || '...')}</div>`;
+    }).join('');
+  }
 }
 
 function authHeaders() {
