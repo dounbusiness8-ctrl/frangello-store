@@ -690,3 +690,42 @@ textarea { font-family: inherit; resize: vertical; }
   .dashboard-hero h2 { font-size: 26px; }
   .admin-products-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── DRAG-DROP IMAGE ZONE ─────────────────────────────────────────────────── */
+.img-drop-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-drop-zone:hover, .img-drop-zone.drag-over {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+.img-drop-zone.drag-over { border-style: solid; }
+.img-drop-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
+.img-drop-inner svg { color: #9ca3af; }
+.img-drop-zone:hover .img-drop-inner svg,
+.img-drop-zone.drag-over .img-drop-inner svg { color: #6366f1; }
+.upload-link {
+  color: #6366f1;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  pointer-events: all;
+}

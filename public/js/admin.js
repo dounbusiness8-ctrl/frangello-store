@@ -429,6 +429,7 @@ function openProductModal(editId = null) {
   const form = document.getElementById('productForm');
   form.reset();
   document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('aiCollectionHint').style.display = 'none';
   uploadedImageData = '';
   currentVariantDraft = [];
   currentStoryImages = [];
@@ -478,9 +479,168 @@ document.getElementById('pImage').addEventListener('input', function() {
   showImagePreview(this.value);
 });
 
-document.getElementById('pImageFile').addEventListener('change', async function() {
-  this.value = '';
-  showToast('File upload not supported. Upload your image to imgur.com and paste the URL in the Image URL field.', 'error');
+// ─── IMAGE UPLOAD (drag-drop + click) ────────────────────────────────────────
+
+async function uploadImageFile(file, progressEl) {
+  if (!file || !file.type.startsWith('image/')) {
+    showToast('Please choose an image file.', 'error');
+    return null;
+  }
+  if (progressEl) progressEl.style.display = 'block';
+  try {
+    // Compress image client-side using canvas (max 1200px, 80% quality)
+    const compressed = await compressImage(file, 1200, 0.82);
+    const base64 = compressed.split(',')[1]; // strip data:...;base64,
+    const res = await fetch('/api/admin/upload-image', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: base64, filename: file.name })
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      throw new Error(d.error || 'Upload failed');
+    }
+    const { url } = await res.json();
+    return url;
+  } finally {
+    if (progressEl) progressEl.style.display = 'none';
+  }
+}
+
+function compressImage(file, maxSize, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function clearProductImage() {
+  uploadedImageData = '';
+  document.getElementById('pImage').value = '';
+  document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('imagePreview').src = '';
+}
+
+// Product main image: drag-drop zone
+(function setupProductImageDrop() {
+  const zone = document.getElementById('imgDropZone');
+  const fileInput = document.getElementById('pImageFile');
+  const progressEl = document.getElementById('imgUploadProgress');
+
+  async function handleFile(file) {
+    const url = await uploadImageFile(file, progressEl);
+    if (url) {
+      uploadedImageData = url;
+      document.getElementById('pImage').value = '';
+      showImagePreview(url);
+      showToast('Image uploaded!', 'success');
+    }
+  }
+
+  zone.addEventListener('click', (e) => { if (e.target !== fileInput) fileInput.click(); });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', async e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) await handleFile(file);
+  });
+  fileInput.addEventListener('change', async function() {
+    if (this.files[0]) await handleFile(this.files[0]);
+    this.value = '';
+  });
+})();
+
+// Story images: drag-drop zone
+(function setupStoryImageDrop() {
+  const zone = document.getElementById('storyDropZone');
+  const fileInput = document.getElementById('storyImageFiles');
+  const progressEl = document.getElementById('storyUploadProgress');
+
+  async function handleFiles(files) {
+    if (progressEl) progressEl.style.display = 'block';
+    for (const file of Array.from(files)) {
+      const url = await uploadImageFile(file, null);
+      if (url) currentStoryImages.push(url);
+    }
+    if (progressEl) progressEl.style.display = 'none';
+    syncStoryImageUrlsField();
+    renderStoryImagesPreview();
+    showToast(`${files.length} image(s) uploaded!`, 'success');
+  }
+
+  zone.addEventListener('click', (e) => { if (e.target !== fileInput) fileInput.click(); });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', async e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) await handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', async function() {
+    if (this.files.length) await handleFiles(this.files);
+    this.value = '';
+  });
+})();
+
+// ─── AI COLLECTION DETECTION ─────────────────────────────────────────────────
+let _collectionTimer = null;
+function scheduleCollectionDetect() {
+  clearTimeout(_collectionTimer);
+  _collectionTimer = setTimeout(detectCollectionAI, 700);
+}
+
+async function detectCollectionAI() {
+  const name = document.getElementById('pName').value.trim();
+  const desc = document.getElementById('pDesc').value.trim();
+  if (!name && !desc) return;
+  const collectionEl = document.getElementById('pCollection');
+  if (collectionEl.value) return; // already selected, don't override
+
+  try {
+    const res = await fetch('/api/admin/suggest-collection', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description: desc })
+    });
+    if (!res.ok) return;
+    const { collection, slug } = await res.json();
+    if (!collection) return;
+
+    const hintEl = document.getElementById('aiCollectionHint');
+    const collOption = Array.from(collectionEl.options).find(o => o.value === collection);
+    const label = collOption ? collOption.text : slug;
+    hintEl.innerHTML = `<span style="font-size:12px;color:#6366f1;display:flex;align-items:center;gap:6px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      AI suggests: <strong>${label}</strong>
+      <button type="button" onclick="applyAISuggestion('${collection}')" style="background:#6366f1;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;font-weight:600">Use it</button>
+    </span>`;
+    hintEl.style.display = 'block';
+  } catch {}
+}
+
+function applyAISuggestion(collectionId) {
+  document.getElementById('pCollection').value = collectionId;
+  document.getElementById('aiCollectionHint').style.display = 'none';
+}
+
+document.getElementById('pName').addEventListener('input', scheduleCollectionDetect);
+document.getElementById('pDesc').addEventListener('input', scheduleCollectionDetect);
+document.getElementById('pCollection').addEventListener('change', () => {
+  document.getElementById('aiCollectionHint').style.display = 'none';
 });
 
 document.getElementById('storyImageFiles').addEventListener('change', async function() {

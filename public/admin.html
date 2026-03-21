@@ -426,6 +426,7 @@
           <select id="pCollection">
             <option value="">Select collection</option>
           </select>
+          <div id="aiCollectionHint" style="display:none;margin-top:6px"></div>
         </div>
       </div>
       <div class="form-group">
@@ -472,11 +473,18 @@
       </div>
       <div class="form-group">
         <label>Product Image</label>
-        <input type="file" id="pImageFile" accept="image/*" />
-        <input type="url" id="pImage" placeholder="Or paste image URL if needed" />
-        <p class="field-hint">Upload a picture from your device or keep using an image link.</p>
-        <div id="imagePreviewWrap" style="margin-top:8px;display:none">
+        <div id="imgDropZone" class="img-drop-zone">
+          <div class="img-drop-inner">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span id="imgDropText">Drag &amp; drop image here or <label for="pImageFile" class="upload-link">browse</label></span>
+            <input type="file" id="pImageFile" accept="image/*" style="display:none" />
+            <div id="imgUploadProgress" style="display:none;margin-top:6px;font-size:12px;color:#6366f1">Uploading…</div>
+          </div>
+        </div>
+        <input type="url" id="pImage" placeholder="Or paste image URL" style="margin-top:8px" />
+        <div id="imagePreviewWrap" style="margin-top:8px;display:none;position:relative">
           <img id="imagePreview" src="" alt="Preview" style="max-height:120px;border-radius:8px;object-fit:cover" />
+          <button type="button" onclick="clearProductImage()" style="position:absolute;top:4px;right:4px;background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;line-height:1">✕</button>
         </div>
       </div>
       <div class="form-group">
@@ -490,10 +498,17 @@
             </div>
             <div class="form-group" style="margin-bottom:0">
               <label>Landing Images</label>
-              <input type="file" id="storyImageFiles" accept="image/*" multiple />
-              <textarea id="storyImageUrls" rows="4" placeholder="Or paste image URLs here, one per line"></textarea>
-              <p class="field-hint">You can upload multiple pictures at once. First image goes to first section, second image to second section, and so on.</p>
-              <div id="storyImagesPreview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px"></div>
+              <div id="storyDropZone" class="img-drop-zone" style="min-height:80px">
+                <div class="img-drop-inner">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span>Drag &amp; drop images here or <label for="storyImageFiles" class="upload-link">browse</label> (multiple allowed)</span>
+                  <input type="file" id="storyImageFiles" accept="image/*" multiple style="display:none" />
+                  <div id="storyUploadProgress" style="display:none;margin-top:6px;font-size:12px;color:#6366f1">Uploading…</div>
+                </div>
+              </div>
+              <textarea id="storyImageUrls" rows="3" placeholder="Or paste image URLs here, one per line" style="margin-top:8px"></textarea>
+              <p class="field-hint" style="margin-top:4px">First image → first section, second image → second section, etc.</p>
+              <div id="storyImagesPreview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:8px"></div>
             </div>
           </div>
         </div>

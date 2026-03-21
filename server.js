@@ -6,10 +6,15 @@ const {
   DEFAULT_ADMIN_PASSWORD,
   DATA_DIR,
   USE_BLOB_STORE,
+  USE_GITHUB,
   readJSON,
   writeJSON,
   readConfig,
-  initSampleData
+  initSampleData,
+  uploadImageToGithub,
+  getImageFromGithub,
+  getImageFromFilesystem,
+  saveImageLocally
 } = require('./storage');
 
 const app = express();
@@ -784,6 +789,77 @@ app.get('/admin', (req, res) => res.sendFile(fileUrl('admin.html')));
 app.get('/account', (req, res) => res.sendFile(fileUrl('account.html')));
 app.get('/account.html', (req, res) => res.sendFile(fileUrl('account.html')));
 app.get('/product/:id', (req, res) => res.sendFile(fileUrl('product.html')));
+// ─── IMAGE UPLOAD ─────────────────────────────────────────────────────────────
+app.post('/api/admin/upload-image', adminAuth, async (req, res, next) => {
+  try {
+    const { data, filename } = req.body; // data = base64 string (no data: prefix), filename = original name
+    if (!data || !filename) return res.status(400).json({ error: 'Missing data or filename' });
+
+    // Sanitize filename, use uuid to avoid conflicts
+    const ext = (filename.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4) || 'jpg';
+    const safeExt = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg';
+    const imageFilename = `${uuidv4()}.${safeExt}`;
+
+    if (USE_GITHUB) {
+      await uploadImageToGithub(imageFilename, data);
+    } else {
+      await saveImageLocally(imageFilename, data);
+    }
+
+    res.json({ url: `/api/images/${imageFilename}` });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Serve images (proxy from GitHub or local filesystem)
+app.get('/api/images/:filename', async (req, res, next) => {
+  try {
+    const filename = req.params.filename.replace(/[^a-zA-Z0-9._-]/g, '');
+    if (!filename) return res.status(400).send('Invalid filename');
+
+    const buffer = USE_GITHUB
+      ? await getImageFromGithub(filename)
+      : await getImageFromFilesystem(filename);
+
+    if (!buffer) return res.status(404).send('Image not found');
+
+    const ext = filename.split('.').pop().toLowerCase();
+    const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' }[ext] || 'image/jpeg';
+    res.setHeader('Content-Type', mime);
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(buffer);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ─── AI COLLECTION SUGGEST ────────────────────────────────────────────────────
+app.post('/api/admin/suggest-collection', adminAuth, async (req, res) => {
+  const { name = '', description = '' } = req.body;
+  const text = `${name} ${description}`.toLowerCase();
+
+  const rules = [
+    { id: 'kitchen', keywords: ['кухн', 'готов', 'блендер', 'фритюр', 'нож', 'посуд', 'миксер', 'тостер', 'кофе', 'чайник', 'плит', 'терк', 'сковород', 'варить', 'духовк', 'cook', 'kitchen', 'food', 'blender', 'chef', 'knife', 'pan', 'pot', 'bake'] },
+    { id: 'gadgets', keywords: ['гаджет', 'наушник', 'bluetooth', 'usb', 'зарядк', 'беспровод', 'аккумулятор', 'led', 'проектор', 'колонк', 'смарт', 'часы', 'экран', 'gadget', 'wireless', 'earphone', 'speaker', 'projector', 'smart', 'watch', 'charger', 'cable', 'tech'] },
+    { id: 'home',    keywords: ['дом', 'квартир', 'диван', 'стол', 'стул', 'органайзер', 'хранен', 'полк', 'вешалк', 'зеркал', 'ковер', 'подушк', 'одеял', 'декор', 'home', 'storage', 'organizer', 'shelf', 'rack', 'decor', 'lamp', 'pillow', 'mirror'] },
+    { id: 'lifestyle', keywords: ['спорт', 'фитнес', 'йога', 'красот', 'уход', 'косметик', 'одежд', 'сумк', 'рюкзак', 'аксессуар', 'lifestyle', 'fashion', 'beauty', 'sport', 'fitness', 'yoga', 'bag', 'wallet', 'travel'] }
+  ];
+
+  let best = { id: '', score: 0 };
+  for (const rule of rules) {
+    const score = rule.keywords.filter(k => text.includes(k)).length;
+    if (score > best.score) best = { id: rule.id, score };
+  }
+
+  if (best.score === 0) return res.json({ collection: null });
+
+  // Find the matching collection from stored collections
+  const collections = await readJSON('collections.json', []);
+  const match = collections.find(c => c.slug === best.id || c.id === best.id);
+  res.json({ collection: match ? match.id : null, slug: best.id, confidence: Math.min(best.score / 3, 1) });
+});
+
 app.get('*', (req, res) => res.sendFile(fileUrl('index.html')));
 
 app.use((error, req, res, next) => {

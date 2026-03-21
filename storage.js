@@ -197,12 +197,72 @@ async function initSampleData() {
   });
 }
 
+// Upload binary image to GitHub db/images/
+async function uploadImageToGithub(filename, base64Content) {
+  if (!USE_GITHUB) throw new Error('GitHub storage not configured');
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_DB_PATH}/images/${filename}`;
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'frangello-store'
+    },
+    body: JSON.stringify({
+      message: `Upload image ${filename}`,
+      content: base64Content // already base64
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Image upload failed: ${res.status}`);
+  }
+}
+
+// Fetch image binary from GitHub, return {buffer, size} or null
+async function getImageFromGithub(filename) {
+  if (!USE_GITHUB) return null;
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_DB_PATH}/images/${filename}`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'frangello-store'
+    }
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data.content) return null;
+  return Buffer.from(data.content.replace(/\n/g, ''), 'base64');
+}
+
+// Serve image from local filesystem fallback
+async function getImageFromFilesystem(filename) {
+  try {
+    const imgPath = path.join(DATA_DIR, 'images', filename);
+    return await fs.readFile(imgPath);
+  } catch { return null; }
+}
+
+// Save image locally
+async function saveImageLocally(filename, base64Content) {
+  const imgDir = path.join(DATA_DIR, 'images');
+  await fs.mkdir(imgDir, { recursive: true });
+  await fs.writeFile(path.join(imgDir, filename), Buffer.from(base64Content, 'base64'));
+}
+
 module.exports = {
   DEFAULT_ADMIN_PASSWORD,
   DATA_DIR,
   USE_BLOB_STORE,
+  USE_GITHUB,
   readJSON,
   writeJSON,
   readConfig,
-  initSampleData
+  initSampleData,
+  uploadImageToGithub,
+  getImageFromGithub,
+  getImageFromFilesystem,
+  saveImageLocally
 };

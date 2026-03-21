@@ -184,20 +184,32 @@ function renderStoryBlocks(p) {
   if (section) section.style.display = '';
   const safeName = escHtml(p.name || 'товар');
 
-  wrap.innerHTML = copy.map((item, index) => `
+  wrap.innerHTML = copy.map((item, index) => {
+    const titleLen = (item.title || '').length;
+    // Auto-size: short title = big, long title = smaller
+    const titleSize = titleLen === 0 ? '' :
+      titleLen <= 20 ? 'font-size:clamp(32px,4.5vw,52px)' :
+      titleLen <= 35 ? 'font-size:clamp(26px,3.5vw,40px)' :
+      titleLen <= 55 ? 'font-size:clamp(22px,2.8vw,34px)' :
+                        'font-size:clamp(18px,2.2vw,28px)';
+    const textLen = (item.text || '').length;
+    const textSize = textLen <= 80 ? 'font-size:17px;line-height:1.7' :
+                     textLen <= 160 ? 'font-size:15px;line-height:1.82' :
+                                      'font-size:14px;line-height:1.9';
+    return `
     <article class="plp-story-card ${index % 2 === 1 ? 'reverse' : ''}">
       <div class="plp-story-copy">
         ${item.label ? `<span class="plp-story-label">${escHtml(item.label)}</span>` : ''}
-        ${item.title ? `<h3>${escHtml(item.title)}</h3>` : ''}
-        ${item.text ? `<p>${escHtml(item.text).replace(/\n/g, '<br />')}</p>` : ''}
+        ${item.title ? `<h3 style="${titleSize}">${escHtml(item.title)}</h3>` : ''}
+        ${item.text ? `<p style="${textSize}">${escHtml(item.text).replace(/\n/g, '<br />')}</p>` : ''}
       </div>
       <div class="plp-story-visual">
         <div class="plp-story-visual-frame">
           <img src="${escAttr(item.image || p.image || '')}" alt="${safeName}" loading="lazy" />
         </div>
       </div>
-    </article>
-  `).join('');
+    </article>`;
+  }).join('');
 }
 
 function updateVariantSelection(name, value) {
