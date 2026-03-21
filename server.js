@@ -418,8 +418,8 @@ app.post('/api/orders', async (req, res, next) => {
         fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: tgChatId, text: msg, parse_mode: 'HTML' })
-        }).catch(() => {});
+          body: JSON.stringify({ chat_id: tgChatId, text: msg })
+        }).then(r => r.json()).then(r => { if (!r.ok) console.error('Telegram error:', r.description); }).catch(e => console.error('Telegram fetch error:', e));
       }
     } catch (_) {}
 
