@@ -66,19 +66,6 @@
     "createdAt": "2026-03-20T17:36:34.410Z"
   },
   {
-    "id": "56cfb5f5-87fb-4426-ac4f-97a552b5a18f",
-    "name": "Фарес Буазза",
-    "phone": "+375 29 123 45 67",
-    "productId": "746b87a3-8f1e-4b4f-b5c6-fc317efdc9db",
-    "productName": "Электрическая точилка для ножей",
-    "price": 72,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "status": "new",
-    "createdAt": "2026-03-20T17:29:12.555Z"
-  },
-  {
     "id": "25c81100-7c27-4e82-a592-076d6ff919d2",
     "name": "Test User",
     "phone": "+375291234567",
