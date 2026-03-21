@@ -100,8 +100,11 @@ function latLonToSVG(lat, lon) {
 
 function onVisitorUpdate(visitors) {
   const count = visitors.length;
+  const bought = visitors.filter(v => v.status === 'bought').length;
   const countEl = document.getElementById('liveViewerCount');
+  const boughtEl = document.getElementById('liveBoughtCount');
   if (countEl) countEl.textContent = count;
+  if (boughtEl) boughtEl.textContent = bought;
 
   const dotsG = document.getElementById('visitorDots');
   const emptyEl = document.getElementById('liveMapEmpty');
