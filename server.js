@@ -407,21 +407,21 @@ app.post('/api/orders', async (req, res, next) => {
     await writeJSON('orders.json', orders);
     sendMetaConversion({ req, order, eventId });
 
-    // Telegram notification
+    // Telegram notification (awaited so serverless doesn't cut it off)
     try {
-      const tgToken = process.env.TELEGRAM_BOT_TOKEN || '8734264069:AAEqdImV5nIdbmOzLi7tXHXaAHHyFpscUSU';
-      const tgChatId = process.env.TELEGRAM_CHAT_ID || '1349075293';
-      if (tgChatId) {
-        const typeLabel = order.orderType === 'consultation' ? '📋 Консультация' : '🛒 Заказ';
-        const variantLine = order.variantLabel ? `\n🎨 Вариант: ${order.variantLabel}` : '';
-        const msg = `${typeLabel} #${orders.length}\n\n👤 Имя: ${order.name}\n📞 Телефон: ${order.phone}\n📦 Товар: ${order.productName}${variantLine}\n💰 Цена: ${order.price} BYN\n⏱ ${new Date(order.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })}`;
-        fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: tgChatId, text: msg })
-        }).then(r => r.json()).then(r => { if (!r.ok) console.error('Telegram error:', r.description); }).catch(e => console.error('Telegram fetch error:', e));
-      }
-    } catch (_) {}
+      const tgToken = '8734264069:AAEqdImV5nIdbmOzLi7tXHXaAHHyFpscUSU';
+      const tgChatId = '1349075293';
+      const typeLabel = order.orderType === 'consultation' ? '📋 Консультация' : '🛒 Заказ';
+      const variantLine = order.variantLabel ? `\nВариант: ${order.variantLabel}` : '';
+      const msg = `${typeLabel}\n\nИмя: ${order.name}\nТелефон: ${order.phone}\nТовар: ${order.productName}${variantLine}\nЦена: ${order.price} BYN`;
+      const tgRes = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: tgChatId, text: msg })
+      });
+      const tgData = await tgRes.json();
+      if (!tgData.ok) console.error('Telegram error:', tgData.description);
+    } catch (tgErr) { console.error('Telegram error:', tgErr.message); }
 
     res.json({ success: true, orderId: order.id });
   } catch (error) {
