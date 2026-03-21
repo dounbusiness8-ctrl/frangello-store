@@ -91,19 +91,6 @@
     "createdAt": "2026-03-20T17:06:55.975Z"
   },
   {
-    "id": "80e02cd7-9f15-49b6-8fa0-2976aaf10974",
-    "name": "Портативный блендер-бутылка",
-    "description": "USB зарядка, 6 лезвий, смешивает за 30 секунд — бери с собой.",
-    "price": 48,
-    "oldPrice": 72,
-    "image": "https://images.pexels.com/photos/775996/pexels-photo-775996.jpeg?auto=compress&w=500",
-    "collection": "kitchen",
-    "badge": "NEW",
-    "visible": true,
-    "featured": false,
-    "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
     "id": "73c3e1fb-051c-4ecd-adcc-011f2757418d",
     "name": "Смарт-часы с фитнес трекером",
     "description": "Пульс, SpO2, мониторинг сна, 7 дней работы, водонепроницаемые.",
