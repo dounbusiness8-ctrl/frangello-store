@@ -1,19 +1,5 @@
 [
   {
-    "id": "9aafc9c4-c7c8-4f53-b4da-faf5d5888680",
-    "name": "test",
-    "phone": "37525529333",
-    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
-    "productName": "Мультифункциональная аэрофритюрница Pro",
-    "price": 149,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "customerId": null,
-    "status": "new",
-    "createdAt": "2026-03-21T08:40:48.293Z"
-  },
-  {
     "id": "15ba4765-ed93-4819-ae23-2478571657fa",
     "name": "Александр",
     "phone": "80177969218",
