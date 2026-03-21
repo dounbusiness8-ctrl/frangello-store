@@ -1,19 +1,5 @@
 [
   {
-    "id": "9a74c931-4aac-42f5-8390-9d960f2e408b",
-    "name": "Test Order",
-    "phone": "+375291234567",
-    "productId": "D194BA72-B646-40C8-A3C2-F75485C0652E",
-    "productName": "Ортопедические наколенники",
-    "price": "74",
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "customerId": null,
-    "status": "new",
-    "createdAt": "2026-03-21T22:04:23.284Z"
-  },
-  {
     "id": "c13cbc65-203a-48eb-80bc-53c49994ec61",
     "name": "Витебск Чкалова",
     "phone": "+375295930798",
