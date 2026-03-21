@@ -662,6 +662,44 @@ app.put('/api/admin/orders/:id', adminAuth, async (req, res, next) => {
   }
 });
 
+app.post('/api/admin/orders/:id/refund', adminAuth, async (req, res, next) => {
+  try {
+    const orders = await readJSON('orders.json', []);
+    const index = orders.findIndex(o => o.id === req.params.id);
+    if (index === -1) return res.status(404).json({ error: 'Order not found' });
+
+    const order = orders[index];
+    const { amount, currency } = req.body;
+    const refundAmount = amount || order.price || 0;
+    const refundCurrency = currency || 'BYN';
+
+    orders[index] = { ...order, status: 'refunded', refundedAt: new Date().toISOString(), refundAmount };
+    await writeJSON('orders.json', orders);
+
+    const refundRequests = await readJSON('refund-requests.json', []);
+    refundRequests.unshift({
+      id: uuidv4(),
+      orderId: order.id,
+      orderReference: order.id.slice(0, 8).toUpperCase(),
+      name: order.name,
+      phone: order.phone,
+      productName: order.productName || '',
+      amount: refundAmount,
+      currency: refundCurrency,
+      requestType: 'cash_refund',
+      reason: 'Cash refund issued by admin',
+      details: `Refund for order #${order.id.slice(0, 8).toUpperCase()} — ${order.productName || ''} — ${refundAmount} ${refundCurrency}`,
+      status: 'resolved',
+      createdAt: new Date().toISOString()
+    });
+    await writeJSON('refund-requests.json', refundRequests);
+
+    res.json({ success: true, order: orders[index] });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.delete('/api/admin/orders/:id', adminAuth, async (req, res, next) => {
   try {
     const orders = await readJSON('orders.json', []);

@@ -162,7 +162,9 @@ function renderOrders(orders) {
             <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
             <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
             <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+            <option value="refunded" ${o.status==='refunded'?'selected':''}>Refunded</option>
           </select>
+          ${o.status !== 'refunded' && o.status !== 'cancelled' && o.orderType !== 'consultation' ? `<button class="btn-refund" onclick="issueRefund('${o.id}')">Refund</button>` : ''}
           <button class="btn-danger" onclick="deleteOrder('${o.id}')">Delete</button>
         </div>
       </td>
@@ -292,6 +294,32 @@ async function deleteOrder(id) {
   await loadOrders();
   await loadStats();
   showToast('Order deleted.', 'success');
+}
+
+async function issueRefund(orderId) {
+  const order = allOrders.find(o => o.id === orderId);
+  if (!order) return;
+  const amount = order.price || 0;
+  const currency = currentConfig.currency || 'BYN';
+  if (!confirm(`Issue cash refund for "${order.productName || 'order'}"?\nAmount: ${amount} ${currency}\nClient: ${order.name} · ${order.phone}`)) return;
+
+  try {
+    const res = await fetch(`/api/admin/orders/${orderId}/refund`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ amount, currency })
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      throw new Error(d.error || 'Refund failed');
+    }
+    await loadOrders();
+    await loadRefundRequests();
+    await loadStats();
+    showToast(`Refund of ${amount} ${currency} issued for ${order.name}`, 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
 }
 
 async function updateRefundStatus(id, status) {
