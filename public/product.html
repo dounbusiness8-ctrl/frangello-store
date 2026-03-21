@@ -284,38 +284,6 @@
         <div class="plp-review-empty">Пока нет опубликованных отзывов по этому товару.</div>
       </div>
 
-      <div class="plp-review-form-card">
-        <div class="plp-review-form-head">
-          <h3>Оставить отзыв</h3>
-          <p>Ваш отзыв сначала попадёт на модерацию в админ-панель, а затем может появиться на странице товара.</p>
-        </div>
-        <form class="plp-review-form" onsubmit="submitProductReview(event)">
-          <div class="plp-review-form-grid">
-            <input type="text" id="plpReviewName" placeholder="Ваше имя" required autocomplete="name" minlength="3" />
-            <input type="tel" id="plpReviewPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" inputmode="tel" />
-          </div>
-          <div class="plp-review-rating-row">
-            <label for="plpReviewRating">Оценка</label>
-            <select id="plpReviewRating">
-              <option value="5">5 звёзд</option>
-              <option value="4">4 звезды</option>
-              <option value="3">3 звезды</option>
-              <option value="2">2 звезды</option>
-              <option value="1">1 звезда</option>
-            </select>
-          </div>
-          <div class="plp-review-upload">
-            <label for="plpReviewImageFile">Фото к отзыву</label>
-            <input type="file" id="plpReviewImageFile" accept="image/*" />
-            <div class="plp-review-upload-note">Необязательно. Можно добавить реальное фото товара.</div>
-            <div class="plp-review-image-preview hidden" id="plpReviewImagePreviewWrap">
-              <img id="plpReviewImagePreview" src="" alt="Предпросмотр фото отзыва" />
-            </div>
-          </div>
-          <textarea id="plpReviewText" placeholder="Напишите, что понравилось или что важно знать другим покупателям." required></textarea>
-          <button type="submit" class="plp-review-btn" id="plpReviewBtn">Отправить отзыв на модерацию</button>
-        </form>
-      </div>
     </div>
   </section>
 
