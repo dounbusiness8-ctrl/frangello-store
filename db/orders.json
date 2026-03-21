@@ -27,19 +27,6 @@
     "createdAt": "2026-03-20T21:00:49.686Z"
   },
   {
-    "id": "34ae1673-7c3b-43fd-ae3c-01c8d2043b8e",
-    "name": "test",
-    "phone": "37525529333",
-    "productId": "28dc3c01-2836-40ea-9b6b-155822d514b8",
-    "productName": "Беспроводные наушники Pro X",
-    "price": 105,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "status": "new",
-    "createdAt": "2026-03-20T17:36:34.410Z"
-  },
-  {
     "id": "d3087eb1-f3c0-453b-99c2-73b871d7c388",
     "name": "Фарес Тест",
     "phone": "+375291234567",
