@@ -1,19 +1,5 @@
 [
   {
-    "id": "1f5b4496-dc24-4f33-ad47-012681b2813f",
-    "name": "test",
-    "phone": "37521312321",
-    "productId": "dc662d9a-107f-462e-b38f-a4ef3ff3777b",
-    "productName": "Откидные крючки для стены",
-    "price": 39,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "customerId": null,
-    "status": "new",
-    "createdAt": "2026-03-21T21:32:02.241Z"
-  },
-  {
     "id": "2e6caa6c-e906-4d5c-a518-41091885f748",
     "name": "tet",
     "phone": "1231231212312",
