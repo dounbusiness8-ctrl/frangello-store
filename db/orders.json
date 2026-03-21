@@ -53,19 +53,6 @@
     "createdAt": "2026-03-20T17:27:26.012Z"
   },
   {
-    "id": "c05cee7e-5532-41af-8568-db9e5981cadc",
-    "name": "Иван Иванов",
-    "phone": "+375291234567",
-    "productId": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
-    "productName": "Test",
-    "price": 149,
-    "variantSelection": {},
-    "variantLabel": "",
-    "orderType": "order",
-    "status": "new",
-    "createdAt": "2026-03-20T17:17:20.673Z"
-  },
-  {
     "id": "d3087eb1-f3c0-453b-99c2-73b871d7c388",
     "name": "Фарес Тест",
     "phone": "+375291234567",
