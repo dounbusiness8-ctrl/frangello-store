@@ -64,6 +64,19 @@ function connectSSE() {
 function onLiveOrder(order) {
   // Prepend to in-memory list
   allOrders = [order, ...allOrders.filter(o => o.id !== order.id)];
+
+  // Update stat cards instantly
+  const total = allOrders.length;
+  const newCount = allOrders.filter(o => o.status === 'new').length;
+  const today = allOrders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString()).length;
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('s-total', total);
+  setEl('s-new', newCount);
+  setEl('s-today', today);
+  setEl('heroOrdersBadge', total);
+  const badge = document.getElementById('newOrderBadge');
+  if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'flex' : 'none'; }
+
   // Prepend flash row to table
   const tbody = document.getElementById('ordersBody');
   if (tbody) {
@@ -84,11 +97,51 @@ function onLiveOrder(order) {
       </div></td>`;
     tbody.insertBefore(tr, tbody.firstChild);
   }
-  // Update stats
+
   renderAnalytics();
   renderRecentOrders(allOrders.slice(0, 5));
-  // Toast notification
-  showToast(`🛒 Новый заказ: ${order.name} — ${order.productName}`);
+  playOrderSound();
+  showOrderNotification(order);
+}
+
+function playOrderSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [
+      { freq: 784, start: 0,    dur: 0.12, gain: 0.4 },
+      { freq: 988, start: 0.1,  dur: 0.12, gain: 0.4 },
+      { freq: 1175, start: 0.2, dur: 0.22, gain: 0.5 },
+    ];
+    notes.forEach(({ freq, start, dur, gain }) => {
+      const osc = ctx.createOscillator();
+      const g   = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(gain, ctx.currentTime + start);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + dur + 0.05);
+    });
+  } catch (_) {}
+}
+
+function showOrderNotification(order) {
+  // Remove any existing notification
+  document.getElementById('orderNotifBanner')?.remove();
+  const el = document.createElement('div');
+  el.id = 'orderNotifBanner';
+  el.innerHTML = `
+    <div class="order-notif-icon">🛒</div>
+    <div class="order-notif-body">
+      <div class="order-notif-title">Новый заказ!</div>
+      <div class="order-notif-sub">${esc(order.name)} · ${esc(order.productName)} · <strong>${order.price} BYN</strong></div>
+    </div>
+    <button class="order-notif-close" onclick="this.closest('#orderNotifBanner').remove()">✕</button>
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.classList.add('show'), 10);
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 6000);
 }
 
 // Belarus map coordinate transform (SVG viewBox 0 0 500 420)
