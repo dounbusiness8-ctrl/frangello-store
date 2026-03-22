@@ -1,5 +1,19 @@
 [
   {
+    "id": "689e7da6-a45a-4da7-b0f7-487ace38691f",
+    "name": "Елена",
+    "phone": "+375293604482",
+    "productId": "a4077d18-e825-4326-b94a-deffcdc1f89e",
+    "productName": "Мини-соковыжималка для лимона",
+    "price": 29,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-22T03:41:17.145Z"
+  },
+  {
     "id": "c13cbc65-203a-48eb-80bc-53c49994ec61",
     "name": "Витебск Чкалова",
     "phone": "+375295930798",
