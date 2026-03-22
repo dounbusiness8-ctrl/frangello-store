@@ -1,5 +1,19 @@
 [
   {
+    "id": "305dafed-105c-489c-8131-b11637edabca",
+    "name": "Вероника",
+    "phone": "80333557202",
+    "productId": "dc662d9a-107f-462e-b38f-a4ef3ff3777b",
+    "productName": "Откидные крючки для стены",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-22T22:10:02.223Z"
+  },
+  {
     "id": "ee4c6f80-5c8d-4aa9-87ed-b2e8d619d6f6",
     "name": "Наталья",
     "phone": "+375292665377",
