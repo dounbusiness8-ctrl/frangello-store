@@ -1,5 +1,19 @@
 [
   {
+    "id": "95d0b4a3-074d-492c-b2ab-ddc6fa4bb637",
+    "name": "test",
+    "phone": "37525554222",
+    "productId": "d5667ed1-623a-4cf9-90b1-4ca89a68c0c1",
+    "productName": "Магнитные зажимы для плотных штор",
+    "price": 29,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-23T22:37:55.294Z"
+  },
+  {
     "id": "305dafed-105c-489c-8131-b11637edabca",
     "name": "Вероника",
     "phone": "80333557202",
