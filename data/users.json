@@ -1,0 +1,22 @@
+[
+  {
+    "id": "a3d791ff-6710-4505-8635-be3bc4c9f519",
+    "name": "test",
+    "phone": "375255232044",
+    "phoneNormalized": "375255232044",
+    "passwordHash": "44b7fb6c822e1fbac9240d4bd8d5cea3670e3eae36bad16783ea30ceb26b998f",
+    "favorites": [
+      "4697a121-691a-4972-b8a6-8d81a670bb81"
+    ],
+    "createdAt": "2026-03-20T23:01:24.649Z"
+  },
+  {
+    "id": "demo-customer-frangello",
+    "name": "Demo Client",
+    "phone": "+375447770011",
+    "phoneNormalized": "375447770011",
+    "passwordHash": "5360db231745a924e8769f97f62ba108303931c68c57b3e577a68404d96652e0",
+    "favorites": [],
+    "createdAt": "2026-03-21T00:00:00.000Z"
+  }
+]

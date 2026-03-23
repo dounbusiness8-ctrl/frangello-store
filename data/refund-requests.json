@@ -1,0 +1,17 @@
+[
+  {
+    "id": "5242fc65-ee1a-4dc0-9e31-eb4be3811474",
+    "orderId": "603e635b-86b7-45df-a80f-233f8d7ffd2b",
+    "orderReference": "603E635B",
+    "name": "teest",
+    "phone": "274721321321",
+    "productName": "Мультифункциональная аэрофритюрница Pro",
+    "amount": 149,
+    "currency": "BYN",
+    "requestType": "cash_refund",
+    "reason": "Cash refund issued by admin",
+    "details": "Refund for order #603E635B — Мультифункциональная аэрофритюрница Pro — 149 BYN",
+    "status": "resolved",
+    "createdAt": "2026-03-21T06:30:51.751Z"
+  }
+]
