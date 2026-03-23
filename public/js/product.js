@@ -144,8 +144,7 @@ function renderProduct(p) {
     document.getElementById('plpSaveAmount').textContent = saved.toLocaleString() + ' ' + currency;
   }
 
-  // Sticky bar
-  document.getElementById('stickyPrice').textContent = p.price.toLocaleString() + ' ' + currency;
+  // Sticky bar removed
 
   renderVariants(p.variants || []);
   renderLandingContent(p);
@@ -319,7 +318,7 @@ async function submitProductOrder(e) {
       resetRewardCard();
       document.getElementById('plpOrderForm').classList.add('hidden');
       document.getElementById('plpSuccess').classList.remove('hidden');
-      document.getElementById('stickyBar').classList.remove('visible');
+      document.getElementById('stickyOrderNow').classList.remove('visible');
       document.getElementById('plpSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
       showToast(data.detail || data.error || 'Что-то пошло не так. Попробуйте ещё раз.');
@@ -398,7 +397,7 @@ async function submitConsultationRequest(e) {
       document.getElementById('plpConsultCard').classList.add('hidden');
       document.getElementById('plpRewardCard').classList.add('hidden');
       document.getElementById('plpSuccess').classList.remove('hidden');
-      document.getElementById('stickyBar').classList.remove('visible');
+      document.getElementById('stickyOrderNow').classList.remove('visible');
       document.querySelector('#plpSuccess h3').textContent = 'Заявка на консультацию отправлена!';
       document.querySelector('#plpSuccess p').innerHTML = 'Спасибо, <strong id="plpSuccessName"></strong>! Мы свяжемся с вами по номеру <strong id="plpSuccessPhone"></strong> и поможем выбрать подходящий вариант.';
       document.getElementById('plpSuccessName').textContent = name;
@@ -736,16 +735,16 @@ function initCutoffTimer() {
 
 // ─── STICKY BAR ───────────────────────────────────────────────────────────────
 function initStickyBar() {
-  const bar = document.getElementById('stickyBar');
+  const btn = document.getElementById('stickyOrderNow');
   const form = document.getElementById('plpOrderForm');
-  bar.classList.remove('hidden');
 
   const observer = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      bar.classList.remove('visible');
+    const success = document.getElementById('plpSuccess');
+    const orderDone = success && !success.classList.contains('hidden');
+    if (entry.isIntersecting || orderDone) {
+      btn.classList.remove('visible');
     } else {
-      if (!document.getElementById('plpSuccess').classList.contains('hidden') === false) return;
-      bar.classList.add('visible');
+      btn.classList.add('visible');
     }
   }, { threshold: 0.1 });
 
