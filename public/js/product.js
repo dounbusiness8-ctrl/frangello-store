@@ -139,9 +139,6 @@ function renderProduct(p) {
     const oldPriceEl = document.getElementById('plpOldPrice');
     oldPriceEl.textContent = p.oldPrice.toLocaleString() + ' ' + currency;
     oldPriceEl.style.display = 'inline';
-    const saved = p.oldPrice - p.price;
-    document.getElementById('plpSaveBadge').style.display = 'flex';
-    document.getElementById('plpSaveAmount').textContent = saved.toLocaleString() + ' ' + currency;
   }
 
   // Sticky bar removed
