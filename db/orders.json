@@ -1,5 +1,19 @@
 [
   {
+    "id": "85aa4098-178e-42d6-a548-23116cfa40f2",
+    "name": "Дмитрий",
+    "phone": "+375296462300",
+    "productId": "7d1e0980-c00c-4fc5-9742-a271b461ebd6",
+    "productName": "Брелок с шерстью кота — памятный сувенир",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-24T15:30:54.330Z"
+  },
+  {
     "id": "95d0b4a3-074d-492c-b2ab-ddc6fa4bb637",
     "name": "test",
     "phone": "37525554222",
