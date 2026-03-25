@@ -561,6 +561,7 @@ function renderAdminProducts(products) {
         </div>
         <div class="admin-product-price">${(p.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'} ${p.oldPrice ? `<span style="font-size:12px;color:#bbb;font-weight:400;text-decoration:line-through">${p.oldPrice.toLocaleString()} ${currentConfig.currency || 'BYN'}</span>` : ''}</div>
         <div class="admin-product-actions">
+          <a href="/product/${p.id}" target="_blank" class="btn-secondary" style="font-size:12px;padding:7px 12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px">👁 Страница</a>
           <button class="btn-primary" style="font-size:12px;padding:7px 14px" onclick="openProductModal('${p.id}')">Edit</button>
           <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
           <button class="btn-secondary" style="font-size:12px;padding:7px 10px" onclick="toggleVisible('${p.id}', ${!p.visible})">${p.visible ? 'Hide' : 'Show'}</button>
