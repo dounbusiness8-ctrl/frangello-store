@@ -391,7 +391,7 @@ async function submitConsultationRequest(e) {
       document.getElementById('plpSuccessName').textContent = name;
       document.getElementById('plpSuccessPhone').textContent = phone;
       document.getElementById('plpOrderForm').classList.add('hidden');
-      document.getElementById('plpConsultCard').classList.add('hidden');
+      document.getElementById('plpConsultCard')?.classList.add('hidden');
       document.getElementById('plpRewardCard').classList.add('hidden');
       document.getElementById('plpSuccess').classList.remove('hidden');
       document.getElementById('stickyOrderNow').classList.remove('visible');

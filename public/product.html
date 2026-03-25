@@ -75,6 +75,7 @@
         <div class="plp-collection-tag" id="plpCollection"></div>
 
         <h1 class="plp-product-title" id="plpTitle">Загрузка...</h1>
+        <div class="plp-viewers-live"><span class="plp-live-dot"></span><span id="plpViewersText">18 человек смотрят прямо сейчас</span></div>
 
         <!-- PRICE BLOCK -->
         <div class="plp-price-block">
@@ -98,53 +99,27 @@
         </div>
 
         <!-- ORDER FORM -->
-        <div class="plp-social-proof">
-          <span class="plp-social-dot"></span>
-          <span><strong id="plpOrderCount">127</strong> человек заказали сегодня</span>
-        </div>
         <div class="plp-order-form" id="plpOrderForm">
           <div class="plp-form-top">
-            <div>
-              <h3 class="plp-form-title">Оформить заказ</h3>
-              <p class="plp-form-subtitle">Заявка за 30 секунд — перезвоним быстро</p>
-            </div>
-            <div class="plp-form-badge">Оплата при получении</div>
+            <h3 class="plp-form-title">Оформить заказ</h3>
+            <div class="plp-form-badge">✓ Оплата при получении</div>
           </div>
           <form onsubmit="submitProductOrder(event)">
-            <div class="plp-form-group">
-              <input type="text" id="plpName" placeholder="👤 Ваше имя" required autocomplete="name" minlength="3" />
-            </div>
-            <div class="plp-form-group">
-              <input type="tel" id="plpPhone" placeholder="📞 Номер телефона (+375...)" required autocomplete="tel" inputmode="tel" />
-            </div>
-            <div class="plp-no-risk">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="#4ade80"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-              Оплата только при получении — никакого риска
+            <div class="plp-form-inputs">
+              <input type="text" id="plpName" placeholder="Ваше имя" required autocomplete="name" minlength="3" />
+              <input type="tel" id="plpPhone" placeholder="+375 __ ___ __ __" required autocomplete="tel" inputmode="tel" />
             </div>
             <button type="submit" class="plp-order-btn" id="plpOrderBtn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03L20.7 6H5.21l-.94-2H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.96C5 17.1 5.9 18 7 18h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg>
-              Заказать — Оплата при получении
+              Заказать — оплата при получении
             </button>
-            <p class="plp-form-note">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-              Мы позвоним для подтверждения. Оплата только при доставке.
-            </p>
+            <div class="plp-under-btn">
+              <span>🔒 Без предоплаты</span>
+              <span>📞 Позвоним сегодня</span>
+              <span>🚚 Доставка 2–5 дней</span>
+            </div>
             <p class="plp-legal-note">
               Отправляя форму, вы соглашаетесь с <a href="/privacy.html">политикой конфиденциальности</a> и <a href="/offer.html">условиями оферты</a>.
             </p>
-            <div class="plp-form-trust">
-              <span>✓ Позвоним сегодня</span>
-              <span>✓ Доставка 2–5 дней</span>
-              <span>✓ Оплата при доставке</span>
-            </div>
-            <div class="plp-cutoff-card" id="plpCutoffCard">
-              <div class="plp-cutoff-top">
-                <strong>Скидка действует ещё</strong>
-                <span class="plp-cutoff-status">Акция дня</span>
-              </div>
-              <div class="plp-cutoff-timer" id="plpCutoffTimer">02:14:36</div>
-              <p class="plp-cutoff-text" id="plpCutoffText">Если оставить заявку сегодня, вы фиксируете текущую цену и размер скидки до подтверждения заказа.</p>
-            </div>
           </form>
         </div>
 
@@ -227,29 +202,6 @@
   </section>
 
 
-  <section class="plp-consult-section">
-    <div class="plp-container">
-      <div class="plp-consult-card" id="plpConsultCard">
-        <div class="plp-consult-head">
-          <div>
-            <h3>Нужна консультация по товару?</h3>
-            <p>Если хотите уточнить вариант, размер, модель или просто посоветоваться перед заказом, оставьте номер телефона и имя. Мы свяжемся с вами и поможем выбрать.</p>
-          </div>
-          <span class="plp-consult-badge">Консультация</span>
-        </div>
-        <form class="plp-consult-form" onsubmit="submitConsultationRequest(event)">
-          <div class="plp-consult-grid">
-            <input type="text" id="plpConsultName" placeholder="Ваше имя" required autocomplete="name" minlength="3" />
-            <input type="tel" id="plpConsultPhone" placeholder="+375 29 123 45 67" required autocomplete="tel" inputmode="tel" />
-          </div>
-          <button type="submit" class="plp-consult-btn" id="plpConsultBtn">Получить консультацию</button>
-          <p class="plp-consult-legal">
-            Отправляя заявку, вы принимаете <a href="/privacy.html">политику обработки данных</a>.
-          </p>
-        </form>
-      </div>
-    </div>
-  </section>
 
 </main>
 
@@ -283,9 +235,7 @@
 
 <!-- Sticky Order Now button (mobile) -->
 <div class="sticky-order-now" id="stickyOrderNow">
-  <button onclick="scrollToForm()">
-    🛒 Заказать — оплата при получении
-  </button>
+  <button onclick="scrollToForm()">Заказать — оплата при получении</button>
 </div>
 <script src="/js/tracking.js"></script>
 <script src="/js/customer.js"></script>
