@@ -1,5 +1,19 @@
 [
   {
+    "id": "d7f4646e-0eac-4156-a7d1-3a494dd289fb",
+    "name": "test",
+    "phone": "255232454",
+    "productId": "b568c5d6-2c55-42f7-9014-9e3d6f1819ba",
+    "productName": "Дышащие летние носки для женщин — низкий вырез",
+    "price": 29,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-25T22:00:54.143Z"
+  },
+  {
     "id": "bc0e1e96-3a80-4f1d-9aca-d018a5351b97",
     "name": "Олег Тышкевич",
     "phone": "+375291525378",
