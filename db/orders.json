@@ -1,5 +1,19 @@
 [
   {
+    "id": "7cc036d2-8e43-4070-a556-39a82ac35c20",
+    "name": "Володя",
+    "phone": "+375259334727",
+    "productId": "b9f57874-9a19-44db-bb86-ecbf8d3b79ee",
+    "productName": "Профессиональные кусачки для вросших ногтей",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-26T03:07:09.965Z"
+  },
+  {
     "id": "2f61b6cb-5d8b-45d4-a069-6821bab01841",
     "name": "Виктор",
     "phone": "+375 (33) 914-99-91",
