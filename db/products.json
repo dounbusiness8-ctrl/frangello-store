@@ -1,5 +1,19 @@
 [
   {
+    "id": "ef0c7bd9-9017-4ecd-9575-46a48386ec00",
+    "name": "Брелок-дракон с подвижными крыльями и подсветкой (Беззубик)",
+    "description": "Брелок в форме дракона Беззубика с подвижными крыльями и светящимися глазами. Встряхните — крылья двигаются и загораются! Выключатель ON/OFF. Крепление на ключи или сумку.",
+    "price": 49,
+    "oldPrice": null,
+    "collection": "",
+    "badge": "",
+    "visible": true,
+    "image": "https://m.media-amazon.com/images/I/51KU-TzuoKL.jpg",
+    "variants": [],
+    "landingHtml": "<h2 style=\"text-align:center; color:#e53e3e;\">Брелок-дракон с подвижными крыльями и подсветкой (Беззубик)</h2>\n<p style=\"text-align:center; font-size:18px;\">Ваш карманный Ночная Фурия — встряхните и он оживёт!</p>\n\n<img src=\"https://m.media-amazon.com/images/I/51KU-TzuoKL.jpg\" style=\"max-width:100%; border-radius:8px; margin:10px 0;\">\n\n<h3>Подвижные крылья</h3>\n<p>Игрушка реагирует на встряхивание — крылья начинают двигаться вверх и вниз, создавая эффект полёта дракона!</p>\n\n<img src=\"https://m.media-amazon.com/images/I/71-CC9ovpgL.jpg\" style=\"max-width:100%; border-radius:8px; margin:10px 0;\">\n\n<h3>Светящиеся глаза</h3>\n<p>При включении переключателя ON/OFF и встряхивании глаза дракона загораются ярким светом. Без встряхивания свет не горит — экономия батареи.</p>\n\n<img src=\"https://m.media-amazon.com/images/I/510Ecy778aL.jpg\" style=\"max-width:100%; border-radius:8px; margin:10px 0;\">\n\n<h3>Детализированный дизайн</h3>\n<p>Фигурка дракона Беззубика с текстурной поверхностью, крыльями и устойчивой формой. Выполнена с вниманием к деталям из мультфильма «Как приручить дракона».</p>\n\n<img src=\"https://m.media-amazon.com/images/I/71MrfMPLkpL.jpg\" style=\"max-width:100%; border-radius:8px; margin:10px 0;\">\n\n<h3>Удобное крепление</h3>\n<p>Металлическое кольцо для крепления на ключи, сумку, рюкзак или другие предметы.</p>\n\n<img src=\"https://m.media-amazon.com/images/I/61qmSAFesTL.jpg\" style=\"max-width:100%; border-radius:8px; margin:10px 0;\">\n\n<h3>В комплекте</h3>\n<p>1 × Брелок-дракон со встроенным переключателем и подвижными крыльями</p>\n\n<p style=\"text-align:center; font-size:20px; color:#e53e3e; font-weight:bold;\">Идеальный подарок для фанатов драконов!</p>",
+    "createdAt": "2026-03-26T18:45:11.321Z"
+  },
+  {
     "id": "a539fc80-20e9-49c9-a443-5fa9708579bf",
     "name": "Мультитул «Снежинка» 18-в-1 — брелок-отвёртка",
     "description": "Компактный мультитул в форме снежинки из нержавеющей стали. 18 инструментов в одном: отвёртки, шестигранники, открывалка, резак. Крепится на брелок. Размер 6 см, вес 66 г. Идеальный подарок.",
