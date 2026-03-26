@@ -1,5 +1,19 @@
 [
   {
+    "id": "29df1f25-71d2-4200-bb70-b8a432084443",
+    "name": "Олег Савастьянов",
+    "phone": "+375292904668",
+    "productId": "247c1b82-842a-4209-a525-bc38a89a2018",
+    "productName": "Мощная мышеловка с высокой чувствительностью",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-26T03:59:06.347Z"
+  },
+  {
     "id": "89bb439f-196c-4320-ac57-990bd19a16f4",
     "name": "Алина Дробышевская",
     "phone": "+375295058925",
