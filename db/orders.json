@@ -1,5 +1,19 @@
 [
   {
+    "id": "d63074c1-57cf-4ee0-8af9-9d5c8d6c2581",
+    "name": "Наталья Холодинская",
+    "phone": "+375296584559",
+    "productId": "c8071d5b-0fb6-4dc8-b29c-22f6d04deafa",
+    "productName": "Невидимые ультратонкие магниты для дверей — 10 шт.",
+    "price": 29,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-26T16:02:27.867Z"
+  },
+  {
     "id": "ecf39240-6c32-4b3f-aa2c-b6a2121daa62",
     "name": "Наталья Холодинская",
     "phone": "+375296584559",
