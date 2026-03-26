@@ -1,5 +1,19 @@
 [
   {
+    "id": "22fa9aed-f7fe-43c5-9809-d7fb39c963a5",
+    "name": "Снежанна",
+    "phone": "+375293853957",
+    "productId": "bb70c920-8325-4b39-8757-6d348f994c6a",
+    "productName": "Карманный штатив PocketPod — 3 в 1",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-26T04:27:47.147Z"
+  },
+  {
     "id": "29df1f25-71d2-4200-bb70-b8a432084443",
     "name": "Олег Савастьянов",
     "phone": "+375292904668",
