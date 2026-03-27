@@ -372,19 +372,6 @@
     "createdAt": "2026-03-21T07:17:17.031Z"
   },
   {
-    "id": "4caca925-dbe6-4d1e-be7b-bdad519bd486",
-    "name": "Мультифункциональная аэрофритюрница Pro",
-    "description": "Готовьте вкусно на 80% меньше масла. Цифровой экран, 8 режимов приготовления.",
-    "price": 149,
-    "oldPrice": 219,
-    "image": "https://images.pexels.com/photos/4116714/pexels-photo-4116714.jpeg?auto=compress&w=500",
-    "collection": "kitchen",
-    "badge": "HOT",
-    "visible": true,
-    "featured": true,
-    "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
     "id": "40c00517-2630-4d94-9261-3ac1c5aa54b0",
     "name": "Умная LED лампа для рабочего стола",
     "description": "USB зарядка, 3 режима цвета, сенсорное управление, гибкая ножка.",
