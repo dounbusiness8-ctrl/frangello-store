@@ -1,5 +1,19 @@
 [
   {
+    "id": "4b5fc03a-90e6-41a6-b444-5e76a0e9d800",
+    "name": "Иссам",
+    "phone": "375296153290",
+    "productId": "25aae088-2a3a-4e41-91bd-749c9274c350",
+    "productName": "RoscaPro™ Нарезчик резьбы для ПВХ/ППР — набор 2 шт.",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T14:30:27.502Z"
+  },
+  {
     "id": "dfd616ef-bf08-4f8d-ab2e-bd1ed0374c70",
     "name": "Татяна",
     "phone": "80297708196",
