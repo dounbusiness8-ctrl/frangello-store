@@ -333,58 +333,6 @@
     "createdAt": "2026-03-21T07:30:18.108Z"
   },
   {
-    "id": "40c00517-2630-4d94-9261-3ac1c5aa54b0",
-    "name": "Умная LED лампа для рабочего стола",
-    "description": "USB зарядка, 3 режима цвета, сенсорное управление, гибкая ножка.",
-    "price": 58,
-    "oldPrice": 85,
-    "image": "https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&w=500",
-    "collection": "gadgets",
-    "badge": "NEW",
-    "visible": true,
-    "featured": true,
-    "createdAt": "2026-03-20T17:06:55.975Z",
-    "variants": [],
-    "storyBlocks": [
-      {
-        "label": "",
-        "title": "",
-        "text": "What Is the BOI Report?\nThe Beneficial Ownership Information (BOI) Report is a new federal filing requirement created by the Corporate Transparency Act (CTA), administered by the Financial Crimes Enforcement Network (FinCEN), a bureau of the US Department of the Treasury. It went into effect on January 1, 2024.",
-        "image": ""
-      },
-      {
-        "label": "",
-        "title": "",
-        "text": "The BOI report requires most US companies — including LLCs — to disclose who actually owns and controls them. The goal is to combat money laundering, tax fraud, and the use of shell companies to hide illicit wealth.",
-        "image": ""
-      },
-      {
-        "label": "",
-        "title": "",
-        "text": "Who Must File\nThe vast majority of LLCs must file a BOI report. This includes single-member LLCs owned by non-US persons, multi-member LLCs, LLCs that are subsidiaries of foreign companies, and domestic LLCs that operate online businesses. The filing obligation applies regardless of whether the LLC has any US income or employees.",
-        "image": ""
-      },
-      {
-        "label": "",
-        "title": "",
-        "text": "Who Is Exempt\nSome entities are exempt, including large operating companies (more than 20 full-time US employees, more than $5 million in gross receipts, and a physical US office), publicly traded companies, banks, credit unions, insurance companies, tax-exempt nonprofits, and companies in heavily regulated industries. Most small foreign-owned LLCs do not qualify for any exemption and must file.",
-        "image": ""
-      },
-      {
-        "label": "",
-        "title": "",
-        "text": "Filing Deadlines\nThe deadlines depend on when your company was formed. Companies formed before January 1, 2024 had an original deadline of January 1, 2025. If you have not filed yet, you are currently overdue and should file immediately to minimize penalties.",
-        "image": ""
-      },
-      {
-        "label": "",
-        "title": "",
-        "text": "Companies formed between January 1, 2024 and December 31, 2024 had 90 calendar days from the date of formation to file. Companies formed on or after January 1, 2025 have 30 calendar days from the date of formation to file.",
-        "image": ""
-      }
-    ]
-  },
-  {
     "id": "28dc3c01-2836-40ea-9b6b-155822d514b8",
     "name": "Беспроводные наушники Pro X",
     "description": "Активное шумоподавление, 36 часов работы, защита IPX5 от воды.",
