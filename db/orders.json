@@ -1,5 +1,19 @@
 [
   {
+    "id": "125efb2c-f25c-4dc0-ae87-499304b66896",
+    "name": "Александр",
+    "phone": "+375296601266",
+    "productId": "fbf88073-49f6-4f9a-b8e7-023a20279360",
+    "productName": "Щётка 4-в-1 для чистки цепей и звёздочек",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T10:40:53.642Z"
+  },
+  {
     "id": "d7cdde8f-afd4-400b-832e-ae335a935970",
     "name": "Станислав",
     "phone": "+375333534322",
