@@ -461,18 +461,5 @@
     "visible": true,
     "featured": true,
     "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
-    "id": "20ec6761-2373-4c9f-8531-a3d465cb541a",
-    "name": "Мини-проектор HD",
-    "description": "Поддержка 1080p, встроенный динамик, HDMI/USB, кино у вас дома.",
-    "price": 179,
-    "oldPrice": 259,
-    "image": "https://images.pexels.com/photos/7991168/pexels-photo-7991168.jpeg?auto=compress&w=500",
-    "collection": "gadgets",
-    "badge": "NEW",
-    "visible": true,
-    "featured": true,
-    "createdAt": "2026-03-20T17:06:55.975Z"
   }
 ]
