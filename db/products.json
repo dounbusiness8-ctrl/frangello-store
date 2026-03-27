@@ -331,18 +331,5 @@
       }
     ],
     "createdAt": "2026-03-21T07:30:18.108Z"
-  },
-  {
-    "id": "28dc3c01-2836-40ea-9b6b-155822d514b8",
-    "name": "Беспроводные наушники Pro X",
-    "description": "Активное шумоподавление, 36 часов работы, защита IPX5 от воды.",
-    "price": 105,
-    "oldPrice": 159,
-    "image": "https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&w=500",
-    "collection": "gadgets",
-    "badge": "HOT",
-    "visible": true,
-    "featured": true,
-    "createdAt": "2026-03-20T17:06:55.975Z"
   }
 ]
