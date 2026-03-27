@@ -1,5 +1,19 @@
 [
   {
+    "id": "94c77118-c299-451a-8410-680a18da8611",
+    "name": "Денис",
+    "phone": "+375259432846",
+    "productId": "d0a272fe-692e-4977-bdea-dafeff3d6925",
+    "productName": "AutoPen — тестер краски автомобиля",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T23:40:26.415Z"
+  },
+  {
     "id": "90746667-1ae7-4ca5-a9e3-229be9947e53",
     "name": "Денис",
     "phone": "+375259432846",
