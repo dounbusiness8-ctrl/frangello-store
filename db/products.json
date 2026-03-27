@@ -476,19 +476,6 @@
     "createdAt": "2026-03-20T17:06:55.975Z"
   },
   {
-    "id": "244e3efe-ce51-4f68-87c5-f24b00954d8c",
-    "name": "Силиконовый набор для кухни (7 предметов)",
-    "description": "Термостойкость до 230°C, антипригарное, пищевой силикон, можно в посудомойку.",
-    "price": 39,
-    "oldPrice": 59,
-    "image": "https://images.pexels.com/photos/4397844/pexels-photo-4397844.jpeg?auto=compress&w=500",
-    "collection": "kitchen",
-    "badge": "SALE",
-    "visible": true,
-    "featured": false,
-    "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
     "id": "20ec6761-2373-4c9f-8531-a3d465cb541a",
     "name": "Мини-проектор HD",
     "description": "Поддержка 1080p, встроенный динамик, HDMI/USB, кино у вас дома.",
