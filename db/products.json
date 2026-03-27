@@ -448,18 +448,5 @@
     "visible": true,
     "featured": true,
     "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
-    "id": "73c3e1fb-051c-4ecd-adcc-011f2757418d",
-    "name": "Смарт-часы с фитнес трекером",
-    "description": "Пульс, SpO2, мониторинг сна, 7 дней работы, водонепроницаемые.",
-    "price": 92,
-    "oldPrice": 135,
-    "image": "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&w=500",
-    "collection": "gadgets",
-    "badge": "HOT",
-    "visible": true,
-    "featured": true,
-    "createdAt": "2026-03-20T17:06:55.975Z"
   }
 ]
