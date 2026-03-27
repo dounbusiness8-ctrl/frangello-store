@@ -437,19 +437,6 @@
     ]
   },
   {
-    "id": "746b87a3-8f1e-4b4f-b5c6-fc317efdc9db",
-    "name": "Электрическая точилка для ножей",
-    "description": "Профессиональная заточка в 3 этапа, работает со всеми типами ножей.",
-    "price": 72,
-    "oldPrice": 98,
-    "image": "https://images.pexels.com/photos/4397899/pexels-photo-4397899.jpeg?auto=compress&w=500",
-    "collection": "kitchen",
-    "badge": "SALE",
-    "visible": true,
-    "featured": false,
-    "createdAt": "2026-03-20T17:06:55.975Z"
-  },
-  {
     "id": "28dc3c01-2836-40ea-9b6b-155822d514b8",
     "name": "Беспроводные наушники Pro X",
     "description": "Активное шумоподавление, 36 часов работы, защита IPX5 от воды.",
