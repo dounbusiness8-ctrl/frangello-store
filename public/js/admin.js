@@ -344,21 +344,25 @@ function filterOrders() {
 function renderOrders(orders) {
   const tbody = document.getElementById('ordersBody');
   if (!orders.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#bbb">No orders found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:#bbb">No orders found</td></tr>`;
     return;
   }
   tbody.innerHTML = orders.map(o => {
     const d = new Date(o.createdAt);
     const dateStr = d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const img = getProductImage(o.productId, o.productName);
     return `
-    <tr>
+    <tr onclick="openOrderDetail('${o.id}')" style="cursor:pointer">
+      <td style="width:48px;padding:8px 6px">
+        ${img ? `<img src="${esc(img)}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;display:block" onerror="this.style.display='none'">` : '<div style="width:44px;height:44px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px">📦</div>'}
+      </td>
       <td class="order-name">${esc(o.name)}${o.orderType === 'consultation' ? ' <span class="visibility-badge" style="background:#e0f2fe;color:#075985;margin-left:6px">Consultation</span>' : ''}</td>
       <td class="order-phone">${esc(o.phone)}</td>
       <td class="order-product" title="${esc(buildOrderProductLabel(o))}">${esc(buildOrderProductLabel(o) || '—')}</td>
       <td class="order-price">${(o.price || 0).toLocaleString()} ${currentConfig.currency || 'BYN'}</td>
       <td class="order-date">${dateStr}</td>
       <td><span class="status-badge status-${o.status}">${o.status}</span></td>
-      <td>
+      <td onclick="event.stopPropagation()">
         <div class="order-actions">
           <select onchange="updateOrderStatus('${o.id}', this.value)" title="Change status">
             <option value="">Change…</option>
@@ -562,6 +566,11 @@ async function deleteReview(id) {
   showToast('Review deleted.', 'success');
 }
 
+function getProductImage(productId, productName) {
+  const p = allProducts.find(x => x.id === productId || x.name === productName);
+  return p ? (p.image || '') : '';
+}
+
 function renderRecentOrders(orders) {
   const el = document.getElementById('recentOrdersList');
   if (!orders.length) {
@@ -571,9 +580,10 @@ function renderRecentOrders(orders) {
   el.innerHTML = orders.map(o => {
     const mins = Math.round((Date.now() - new Date(o.createdAt)) / 60000);
     const timeAgo = mins < 60 ? `${mins}m ago` : mins < 1440 ? `${Math.round(mins/60)}h ago` : `${Math.round(mins/1440)}d ago`;
+    const img = getProductImage(o.productId, o.productName);
     return `
-    <div class="recent-order-row">
-      <div class="recent-avatar">${o.name.charAt(0).toUpperCase()}</div>
+    <div class="recent-order-row" onclick="openOrderDetail('${o.id}')" style="cursor:pointer">
+      ${img ? `<img class="recent-prod-img" src="${esc(img)}" alt="" onerror="this.style.display='none'">` : `<div class="recent-avatar">${o.name.charAt(0).toUpperCase()}</div>`}
       <div class="recent-info">
         <div class="recent-name">${esc(o.name)}${o.orderType === 'consultation' ? ' · <span style="font-size:12px;color:#1a9fe0;font-weight:700">consultation</span>' : ''} · <span style="font-size:12px;color:#aaa">${esc(o.phone)}</span></div>
         <div class="recent-product">${esc(buildOrderProductLabel(o) || '—')}</div>
@@ -585,6 +595,54 @@ function renderRecentOrders(orders) {
       <span class="status-badge status-${o.status}">${o.status}</span>
     </div>`;
   }).join('');
+}
+
+function openOrderDetail(orderId) {
+  const o = allOrders.find(x => x.id === orderId);
+  if (!o) return;
+  const img = getProductImage(o.productId, o.productName);
+  const d = new Date(o.createdAt);
+  const dateStr = d.toLocaleDateString('ru-RU', { day:'2-digit', month:'long', year:'numeric' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+  const currency = currentConfig.currency || 'BYN';
+
+  let el = document.getElementById('orderDetailModal');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'orderDetailModal';
+    el.className = 'order-detail-overlay';
+    el.onclick = (e) => { if (e.target === el) el.remove(); };
+    document.body.appendChild(el);
+  }
+  el.innerHTML = `
+    <div class="order-detail-box">
+      <button class="order-detail-close" onclick="document.getElementById('orderDetailModal').remove()">✕</button>
+      ${img ? `<img class="order-detail-img" src="${esc(img)}" alt="" onerror="this.style.display='none'">` : ''}
+      <div class="order-detail-header">
+        <span class="status-badge status-${o.status}">${o.status}</span>
+        <span class="order-detail-time">${dateStr}</span>
+      </div>
+      <h2 class="order-detail-product">${esc(buildOrderProductLabel(o) || '—')}</h2>
+      <div class="order-detail-price">${(o.price || 0).toLocaleString()} ${currency}</div>
+      <div class="order-detail-divider"></div>
+      <div class="order-detail-field"><span>Клиент</span><strong>${esc(o.name)}</strong></div>
+      <div class="order-detail-field"><span>Телефон</span><a href="tel:${esc(o.phone)}" class="order-detail-phone">${esc(o.phone)}</a></div>
+      ${o.orderType === 'consultation' ? `<div class="order-detail-field"><span>Тип</span><strong style="color:#1a9fe0">Консультация</strong></div>` : ''}
+      ${o.variants ? `<div class="order-detail-field"><span>Вариант</span><strong>${esc(o.variants)}</strong></div>` : ''}
+      <div class="order-detail-divider"></div>
+      <div class="order-detail-actions">
+        <select onchange="updateOrderStatus('${o.id}', this.value); document.getElementById('orderDetailModal').remove()">
+          <option value="">Изменить статус…</option>
+          <option value="new" ${o.status==='new'?'selected':''}>New</option>
+          <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
+          <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+          <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+          <option value="refunded" ${o.status==='refunded'?'selected':''}>Refunded</option>
+        </select>
+        <a href="tel:${esc(o.phone)}" class="btn-primary" style="text-decoration:none">📞 Позвонить</a>
+        <button class="btn-danger" onclick="deleteOrder('${o.id}'); document.getElementById('orderDetailModal').remove()">Удалить</button>
+      </div>
+    </div>`;
+  el.style.display = 'flex';
 }
 
 // ─── PRODUCTS ─────────────────────────────────────────────────────────────────
@@ -1115,18 +1173,29 @@ function renderTopProducts() {
     return;
   }
 
-  list.innerHTML = topProducts.map(item => `
-    <div class="analytics-list-row">
-      <div>
-        <div class="analytics-list-name">${esc(item.name)}</div>
-        <div class="analytics-list-meta">${item.delivered} delivered • ${item.pending} still in progress</div>
+  list.innerHTML = topProducts.map((item, i) => {
+    const img = getProductImage(item.productId, item.name);
+    const isWinner = i === 0;
+    return `
+    <div class="analytics-list-row ${isWinner ? 'winner-row' : ''}">
+      ${img ? `<img class="analytics-prod-thumb" src="${esc(img)}" alt="" onerror="this.style.display='none'">` : `<div class="analytics-prod-thumb-placeholder">📦</div>`}
+      <div style="flex:1;min-width:0">
+        <div class="analytics-list-name">${isWinner ? '🏆 ' : ''}${esc(item.name)}</div>
+        <div class="analytics-list-meta">${item.delivered} delivered • ${item.pending} pending</div>
       </div>
       <div class="analytics-list-value">
         <strong>${item.count} ${item.count === 1 ? 'order' : 'orders'}</strong>
-        <span>${formatMoney(item.revenue, currency)} total value</span>
+        <span>${formatMoney(item.revenue, currency)}</span>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  // Also update winning product image in overview card
+  const winImg = document.getElementById('a-top-product-img');
+  if (winImg && topProducts[0]) {
+    const src = getProductImage(topProducts[0].productId, topProducts[0].name);
+    if (src) { winImg.src = src; winImg.style.display = 'block'; }
+  }
 }
 
 function renderMomentumCards() {
@@ -1154,6 +1223,7 @@ function getTopProducts(limit = 5) {
     const key = order.productId || order.productName || 'unknown';
     const existing = byProduct.get(key) || {
       name: order.productName || 'Unknown product',
+      productId: order.productId || null,
       count: 0,
       revenue: 0,
       delivered: 0,
