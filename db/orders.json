@@ -1,5 +1,19 @@
 [
   {
+    "id": "90746667-1ae7-4ca5-a9e3-229be9947e53",
+    "name": "Денис",
+    "phone": "+375259432846",
+    "productId": "57b11593-9885-4e20-a956-81843f856a16",
+    "productName": "Вечная спичка — брелок-зажигалка",
+    "price": 38,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T23:36:51.967Z"
+  },
+  {
     "id": "2525652f-20cf-4a88-92f3-70f13a07b120",
     "name": "Наталья",
     "phone": "+375447531955",
