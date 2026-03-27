@@ -1,5 +1,19 @@
 [
   {
+    "id": "e8403f8f-012f-4b86-9b57-e655e17079a0",
+    "name": "Наталья",
+    "phone": "+375295821092",
+    "productId": "f19deffe-47b2-497f-9cf5-8bef4406a559",
+    "productName": "Профессиональные ножницы «зигзаг» для шитья и рукоделия",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T18:11:06.193Z"
+  },
+  {
     "id": "4597735e-139e-4921-abf0-d03221506f5f",
     "name": "Анатолий Парфенович",
     "phone": "+375292703726",
