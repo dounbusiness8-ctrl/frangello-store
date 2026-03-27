@@ -715,14 +715,14 @@ function initCutoffTimer() {
       tomorrowOffer.setHours(23, 59, 59, 999);
       const diff = tomorrowOffer - now;
       timerEl.textContent = formatDuration(diff);
-      statusEl.textContent = 'Новое окно';
+      statusEl.textContent = 'Скидка действует ещё';
       textEl.textContent = 'Текущая акция обновляется вместе с новым дневным окном. Оставьте заявку раньше, чтобы не упустить выгодную цену.';
       return;
     }
 
     const diff = cutoff - now;
     timerEl.textContent = formatDuration(diff);
-    statusEl.textContent = 'Акция дня';
+    statusEl.textContent = 'Скидка действует ещё';
     textEl.textContent = 'Если оставить заявку сегодня, вы фиксируете текущую цену и размер скидки до подтверждения заказа.';
   };
 
