@@ -23,6 +23,7 @@ async function doLogin(e) {
     });
     if (res.ok) {
       adminPassword = pw;
+      sessionStorage.setItem('_adminPw', pw);
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('adminLayout').style.display = 'flex';
       initAdmin();
@@ -36,46 +37,102 @@ async function doLogin(e) {
 
 function logout() {
   adminPassword = '';
+  sessionStorage.removeItem('_adminPw');
   document.getElementById('loginOverlay').style.display = 'flex';
   document.getElementById('adminLayout').style.display = 'none';
+  stopPolling();
 }
+
+// Auto-restore session on page load
+(function restoreSession() {
+  const saved = sessionStorage.getItem('_adminPw');
+  if (!saved) return;
+  adminPassword = saved;
+  fetch('/api/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: saved })
+  }).then(r => {
+    if (r.ok) {
+      document.getElementById('loginOverlay').style.display = 'none';
+      document.getElementById('adminLayout').style.display = 'flex';
+      initAdmin();
+    } else {
+      sessionStorage.removeItem('_adminPw');
+      adminPassword = '';
+    }
+  }).catch(() => {});
+})();
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function initAdmin() {
   await Promise.all([loadStats(), loadOrders(), loadRefundRequests(), loadReviews(), loadProducts(), loadCollections(), loadSettings()]);
-  connectSSE();
+  startPolling();
 }
 
-// ─── LIVE SSE ─────────────────────────────────────────────────────────────────
-let sseSource = null;
-function connectSSE() {
-  if (sseSource) sseSource.close();
-  sseSource = new EventSource(`/api/admin/events?adminPassword=${encodeURIComponent(adminPassword)}`);
-  sseSource.onmessage = (e) => {
-    try {
-      const { type, data } = JSON.parse(e.data);
-      if (type === 'new-order') onLiveOrder(data);
-      if (type === 'visitor-update') onVisitorUpdate(data);
-    } catch (_) {}
-  };
-  sseSource.onerror = () => { sseSource.close(); setTimeout(connectSSE, 5000); };
+// ─── POLLING (replaces SSE — works on Vercel serverless) ──────────────────────
+let _pollTimer = null;
+let _pollingKnownIds = new Set();
+
+function stopPolling() {
+  if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+}
+
+function startPolling() {
+  stopPolling();
+  // Seed known IDs from orders already loaded so first poll doesn't fire for old orders
+  _pollingKnownIds = new Set(allOrders.map(o => o.id));
+  _pollTimer = setInterval(pollOrders, 8000);
+}
+
+async function pollOrders() {
+  try {
+    const res = await fetch('/api/admin/orders', { headers: authHeaders() });
+    if (!res.ok) return;
+    const latest = await res.json();
+
+    // Detect genuinely new orders (not seen before)
+    const newOnes = latest.filter(o => !_pollingKnownIds.has(o.id));
+    newOnes.forEach(o => _pollingKnownIds.add(o.id));
+
+    if (newOnes.length > 0) {
+      allOrders = latest;
+      newOnes.forEach(o => onLiveOrder(o));
+    } else if (latest.length !== allOrders.length) {
+      // Status changes or deletions — silent refresh
+      allOrders = latest;
+      updateStatCards();
+    }
+
+    // Update connection indicator
+    setConnectionStatus(true);
+  } catch (_) {
+    setConnectionStatus(false);
+  }
+}
+
+function updateStatCards() {
+  const total = allOrders.length;
+  const newCount = allOrders.filter(o => o.status === 'new').length;
+  const today = allOrders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString()).length;
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('s-total', total); setEl('s-new', newCount); setEl('s-today', today); setEl('heroOrdersBadge', total);
+  const badge = document.getElementById('newOrderBadge');
+  if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'flex' : 'none'; }
+}
+
+function setConnectionStatus(online) {
+  const dot = document.getElementById('connectionDot');
+  const lbl = document.getElementById('connectionLabel');
+  if (!dot) return;
+  dot.className = 'conn-dot ' + (online ? 'online' : 'offline');
+  if (lbl) lbl.textContent = online ? 'Live' : 'Reconnecting…';
 }
 
 function onLiveOrder(order) {
   // Prepend to in-memory list
   allOrders = [order, ...allOrders.filter(o => o.id !== order.id)];
-
-  // Update stat cards instantly
-  const total = allOrders.length;
-  const newCount = allOrders.filter(o => o.status === 'new').length;
-  const today = allOrders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString()).length;
-  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  setEl('s-total', total);
-  setEl('s-new', newCount);
-  setEl('s-today', today);
-  setEl('heroOrdersBadge', total);
-  const badge = document.getElementById('newOrderBadge');
-  if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'flex' : 'none'; }
+  updateStatCards();
 
   // Prepend flash row to table
   const tbody = document.getElementById('ordersBody');
