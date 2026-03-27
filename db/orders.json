@@ -1,5 +1,19 @@
 [
   {
+    "id": "d7cdde8f-afd4-400b-832e-ae335a935970",
+    "name": "Станислав",
+    "phone": "+375333534322",
+    "productId": "782d43bc-35b0-4550-bf4e-9715ad14f8d8",
+    "productName": "Мини цифровая камера-брелок HD",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-27T09:15:32.834Z"
+  },
+  {
     "id": "ec6787bd-b390-461f-b247-9e40c9aebaee",
     "name": "Александр",
     "phone": "+375296637773",
