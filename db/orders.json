@@ -1,5 +1,19 @@
 [
   {
+    "id": "981b0097-7154-4b24-b79f-c3aa6ecdd354",
+    "name": "Алеся Алеся",
+    "phone": "+375293150009",
+    "productId": "437540c1-baac-4c16-8da2-bb1b12cdd217",
+    "productName": "Заколки Clipia — набор из 4 шт.",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-28T04:54:50.713Z"
+  },
+  {
     "id": "63c50d15-d1fc-4142-b87a-641edc8bd685",
     "name": "Елена Платонова",
     "phone": "+375296957554",
