@@ -1,5 +1,19 @@
 [
   {
+    "id": "485b2b7c-1c7c-4271-a2af-b9f8b4aa3096",
+    "name": "test",
+    "phone": "212424242",
+    "productId": "5a43beb0-e7db-4668-9bc8-336039b66e28",
+    "productName": "Lazy Glasses™ — призматические очки для чтения лёжа",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-28T22:08:48.157Z"
+  },
+  {
     "id": "b7f2285f-2ba4-4d91-a21e-ec925ae4d1f1",
     "name": "Анастасия",
     "phone": "+375447511080",
