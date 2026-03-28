@@ -1,5 +1,19 @@
 [
   {
+    "id": "f3889188-ca51-4143-a88c-e669a994bf49",
+    "name": "Тамара",
+    "phone": "291585444",
+    "productId": "437540c1-baac-4c16-8da2-bb1b12cdd217",
+    "productName": "Заколки Clipia — набор из 4 шт.",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-28T07:52:42.896Z"
+  },
+  {
     "id": "d4f84457-874a-4955-b94a-5e343d8210b4",
     "name": "Маргарита",
     "phone": "+375259209715",
