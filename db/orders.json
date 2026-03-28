@@ -1,5 +1,19 @@
 [
   {
+    "id": "df44f587-251b-4039-b3e8-2dbc25f99ea0",
+    "name": "Оксана",
+    "phone": "+375 295020612",
+    "productId": "94e63b04-218e-4dd3-a680-67608416a514",
+    "productName": "Щётка-пушистик для кошек",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-28T05:25:34.228Z"
+  },
+  {
     "id": "981b0097-7154-4b24-b79f-c3aa6ecdd354",
     "name": "Алеся Алеся",
     "phone": "+375293150009",
