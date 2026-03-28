@@ -1,5 +1,19 @@
 [
   {
+    "id": "b7f2285f-2ba4-4d91-a21e-ec925ae4d1f1",
+    "name": "Анастасия",
+    "phone": "+375447511080",
+    "productId": "94e63b04-218e-4dd3-a680-67608416a514",
+    "productName": "Щётка-пушистик для кошек",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "consultation",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-28T15:21:38.860Z"
+  },
+  {
     "id": "098acc76-9015-4377-b7f5-30d79e295af3",
     "name": "Тамара",
     "phone": "+375291585444",
