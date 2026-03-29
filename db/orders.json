@@ -1,5 +1,19 @@
 [
   {
+    "id": "cfa96edb-3aa8-48e0-98a7-cb6fb0a1bdf5",
+    "name": "Игорь Дьячков",
+    "phone": "+375297848211",
+    "productId": "d49b16e3-6d32-433d-b52a-b40de3bc6ea2",
+    "productName": "Удлинитель для смесителя — оранжевый",
+    "price": 39,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "order",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-29T15:41:03.811Z"
+  },
+  {
     "id": "09bef4b1-88b3-44ee-9a5e-383c36f42ad7",
     "name": "Любовь",
     "phone": "+375298528892",
