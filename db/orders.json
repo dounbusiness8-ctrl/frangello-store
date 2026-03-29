@@ -1,5 +1,19 @@
 [
   {
+    "id": "745171eb-2c7d-4d9c-97b0-a60ff97ab677",
+    "name": "Marina",
+    "phone": "375597542245",
+    "productId": "e71f939d-bb27-448a-9636-a5ed9dc7cf29",
+    "productName": "Когтерез-гриндер 2 в 1 с LED подсветкой",
+    "price": 49,
+    "variantSelection": {},
+    "variantLabel": "",
+    "orderType": "consultation",
+    "customerId": null,
+    "status": "new",
+    "createdAt": "2026-03-29T10:08:32.018Z"
+  },
+  {
     "id": "b0a642b3-f05c-4bc3-ae0f-5f7d40e24b46",
     "name": "Александр",
     "phone": "80296194717",
